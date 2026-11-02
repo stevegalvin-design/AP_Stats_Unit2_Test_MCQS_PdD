@@ -1,0 +1,1789 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AP Stats Unit 2 Test Builder &amp; Exam Simulator</title>
+    <style>
+        :root { --cb-blue: #003366; --cb-dark: #001f3f; --bg-gray: #f4f6f9; --border-color: #cccccc; --correct-green: #28a745; --incorrect-red: #dc3545; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background-color: var(--bg-gray); color: #222; }
+        .hidden { display: none !important; }
+
+        /* PORTAL STYLES */
+        .portal-header { background: var(--cb-blue); color: white; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .portal-container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+        .config-card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 24px; }
+        .config-card label { font-weight: bold; display: block; margin-bottom: 8px; font-size: 1.05rem; }
+        .config-card input[type="text"] { width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1rem; }
+
+        .bank-section { margin-bottom: 30px; }
+        .bank-section h2 { color: var(--cb-blue); margin-bottom: 12px; font-size: 1.3rem; border-bottom: 2px solid var(--cb-blue); padding-bottom: 6px; }
+        .item-card { background: white; border: 1px solid var(--border-color); border-radius: 6px; padding: 16px; margin-bottom: 12px; display: flex; gap: 16px; align-items: flex-start; }
+        .item-card input[type="checkbox"] { width: 20px; height: 20px; margin-top: 4px; cursor: pointer; }
+        .item-content { flex: 1; }
+        .item-title { font-weight: bold; margin-bottom: 4px; color: #333; }
+        .item-topic { font-size: 0.85rem; font-weight: 600; color: #0056b3; background: #e7f1ff; display: inline-block; padding: 2px 8px; border-radius: 4px; margin-bottom: 8px; }
+        .item-full-text { font-size: 0.95rem; color: #222; line-height: 1.5; margin-top: 6px; }
+
+        .launch-bar { position: sticky; bottom: 0; background: white; border-top: 2px solid var(--border-color); padding: 16px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -4px 12px rgba(0,0,0,0.1); }
+        .btn { padding: 12px 24px; border: none; border-radius: 6px; font-weight: bold; font-size: 0.95rem; cursor: pointer; transition: 0.2s; }
+        .btn-print { background: #6c757d; color: white; }
+        .btn-digital { background: var(--cb-blue); color: white; }
+        .btn-digital:hover { background: var(--cb-dark); }
+        .btn-export { background: #28a745; color: white; }
+        .btn-export:hover { background: #218838; }
+
+        table.data-table { border-collapse: collapse; margin: 10px 0; font-size: 0.9rem; width: 100%; max-width: 500px; }
+        table.data-table th, table.data-table td { border: 1px solid var(--border-color); padding: 6px 10px; text-align: center; }
+        table.data-table th { background: #f1f3f5; }
+
+        /* BLUEBOOK SIMULATOR STYLES */
+        #student-view { height: 100vh; display: flex; flex-direction: column; background: #fafafa; }
+        .bb-topbar { background: var(--cb-blue); color: white; height: 50px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-weight: bold; }
+        .bb-tools { display: flex; gap: 10px; }
+        .bb-tool-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 6px 12px; border-radius: 4px; font-size: 0.85rem; cursor: pointer; }
+        .bb-main { display: flex; flex: 1; overflow: hidden; }
+        .bb-pane { flex: 1; padding: 24px; overflow-y: auto; }
+        .bb-pane-left { border-right: 1px solid var(--border-color); background: white; }
+        .symbol-toolbar { background: #f1f3f5; border: 1px solid var(--border-color); border-bottom: none; border-radius: 6px 6px 0 0; padding: 8px; display: flex; gap: 6px; align-items: center; }
+        .symbol-select { padding: 6px; border-radius: 4px; border: 1px solid var(--border-color); font-size: 0.9rem; }
+        .bb-textarea { width: 100%; height: 250px; padding: 12px; border: 1px solid var(--border-color); border-radius: 0 0 6px 6px; font-size: 1rem; line-height: 1.5; font-family: inherit; resize: vertical; }
+        .mcq-options { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+        .mcq-option-label { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 6px; background: white; cursor: pointer; }
+        .bb-footer { height: 60px; background: white; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: white; width: 80%; max-width: 900px; height: 80%; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; }
+        .modal-header { padding: 12px 20px; background: var(--cb-blue); color: white; display: flex; justify-content: space-between; align-items: center; }
+        .modal-body { flex: 1; padding: 20px; overflow-y: auto; }
+        .close-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+#desmos-modal .modal-content { width: 100%; max-width: none; height: 100%; border-radius: 0; }
+#lockout-warning-modal, #hard-lockout-modal { z-index: 2000; }
+
+        /* PRINT PACKET STYLES */
+        #print-test-packet { display: none; padding: 20px; background: white; color: black; font-family: Arial, sans-serif; }
+        .print-header { text-align: center; border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 20px; }
+        .print-student-info { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; }
+        .print-item { margin-bottom: 30px; page-break-inside: avoid; }
+        .print-item-title { font-weight: bold; font-size: 1.05rem; margin-bottom: 8px; }
+        .print-mcq-choices { margin-top: 10px; margin-left: 15px; display: flex; flex-direction: column; gap: 6px; }
+        .print-frq-workspace { border: 1px dashed #666; height: 220px; margin-top: 12px; border-radius: 4px; background: #fafafa; }
+
+        @media print {
+            .portal-header, .config-card, .bank-section h2, .launch-bar, .item-card input, 
+            #student-view, .bb-tools, .symbol-toolbar, .modal, button { display: none !important; }
+            
+            body { background: white; color: black; }
+            
+            body.printing-blank-paper #teacher-portal,
+            body.printing-blank-paper #teacher-review-view { display: none !important; }
+            body.printing-blank-paper #print-test-packet { display: block !important; }
+
+            body.printing-graded-submission #teacher-portal,
+            body.printing-graded-submission #print-test-packet,
+            body.printing-graded-submission #student-view { display: none !important; }
+            body.printing-graded-submission #teacher-review-view { display: block !important; width: 100% !important; max-width: 100% !important; padding: 0 !important; }
+        }
+    </style>
+<script>window.PRE_CONFIGURED_TEST_DATA = {"title":"AP Statistics - Unit 2 Test (Probability & Random Variables) Multiple Choice Section - Period D","passcode":"0618","mcqs":["mcq2","mcq6","mcq9","mcq10","mcq11","mcq14","mcq20","mcq26","mcq30","mcq32","mcq38","mcq47","mcq51","mcq52","mcq58","mcq60"],"frqs":[]};</script>
+</head>
+<body class="printing-blank-paper">
+
+    <div id="print-test-packet"></div>
+
+    <!-- VIEW 1: TEACHER SELECTION PORTAL -->
+    <div id="teacher-portal">
+        <header class="portal-header">
+            <div>
+                <h1>AP Statistics Test Builder — Unit 2: Probability</h1>
+                <span style="font-size: 0.9rem; opacity: 0.9;">CED Standards Aligned Question Pool</span>
+            </div>
+        </header>
+
+        <div class="portal-container">
+            <div class="config-card">
+                <label for="test-title-input">Assessment Title:</label>
+                <input type="text" id="test-title-input" value="AP Statistics - Unit 2 Test (Probability &amp; Random Variables)" style="margin-bottom: 16px;">
+                
+                <label for="teacher-passcode-input">Teacher Lockout Override Passcode:</label>
+                <input type="text" id="teacher-passcode-input" value="1234" placeholder="Enter override PIN (e.g. 1234)" style="width: 250px;">
+                <span style="font-size: 0.85rem; color: #666; margin-left: 10px;">Used to unlock a student's exam if hard lockout triggers.</span>
+            </div>
+
+            <div class="bank-section">
+                <h2>Multiple Choice Question Bank (60 Items)</h2>
+                <div id="mcq-bank-container">
+                <div class="item-card">
+                    <input type="checkbox" id="mcq1" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 1: School Sport vs. Music Group</div>
+                        <div class="item-topic">Topic 2.1: Two-Way Tables &amp; Conditional Probability</div>
+                        <div class="item-full-text">
+                            <div>At a school, students reported whether they play a school sport and whether they are in a music group. Find P(sport | music group).<br><br><table class="data-table"><tbody><tr><th></th><th>Music group</th><th>Not in music group</th><th>Total</th></tr><tr><td><b>Sport</b></td><td>36</td><td>24</td><td>60</td></tr><tr><td><b>No sport</b></td><td>24</td><td>36</td><td>60</td></tr><tr><td><b>Total</b></td><td>60</td><td>60</td><td>120</td></tr></tbody></table></div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.30 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.50 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.60 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.75
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq2" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 2: Travel Method by Grade Level</div>
+                        <div class="item-topic">Topic 2.1: Two-Way Tables &amp; Conditional Probability</div>
+                        <div class="item-full-text">
+                            <div>A survey of 200 students recorded their grade and how they travel to school. Find P(bus | Grade 10).<br><br><table class="data-table"><tbody><tr><th></th><th>Bus</th><th>Walk/bike</th><th>Total</th></tr><tr><td><b>Grade 9</b></td><td>48</td><td>32</td><td>80</td></tr><tr><td><b>Grade 10</b></td><td>36</td><td>44</td><td>80</td></tr><tr><td><b>Grade 11–12</b></td><td>24</td><td>16</td><td>40</td></tr><tr><td><b>Total</b></td><td>108</td><td>92</td><td>200</td></tr></tbody></table></div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.18 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.40 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.45 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.54
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq3" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 3: Club Membership &amp; Volunteering</div>
+                        <div class="item-topic">Topic 2.1: Two-Way Tables &amp; Conditional Probability</div>
+                        <div class="item-full-text">
+                            <div>For 150 students, club membership and volunteering were recorded. Given that a student volunteers, find the probability that the student belongs to a club.<br><br><table class="data-table"><tbody><tr><th></th><th>Volunteer</th><th>Not volunteer</th><th>Total</th></tr><tr><td><b>Club</b></td><td>42</td><td>48</td><td>90</td></tr><tr><td><b>No club</b></td><td>18</td><td>42</td><td>60</td></tr><tr><td><b>Total</b></td><td>60</td><td>90</td><td>150</td></tr></tbody></table></div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.28 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.40 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.47 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.70
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq4" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 4: Early-Bus Status &amp; Breakfast Independence</div>
+                        <div class="item-topic">Topic 2.2: Testing for Independence</div>
+                        <div class="item-full-text">
+                            <div>Among 100 randomly selected students, are early-bus status and eating breakfast independent?<br><br><table class="data-table"><tbody><tr><th></th><th>Breakfast</th><th>No breakfast</th><th>Total</th></tr><tr><td><b>Early bus</b></td><td>42</td><td>18</td><td>60</td></tr><tr><td><b>Later bus</b></td><td>24</td><td>16</td><td>40</td></tr><tr><td><b>Total</b></td><td>66</td><td>34</td><td>100</td></tr></tbody></table></div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) Yes, because 42/100 = 24/100. &nbsp;&nbsp;&nbsp;&nbsp; B) Yes, because 42/60 = 66/100. &nbsp;&nbsp;&nbsp;&nbsp; C) No, because P(breakfast | early bus) = 0.70 and P(breakfast) = 0.66. &nbsp;&nbsp;&nbsp;&nbsp; D) No, because 42/66 ≈ 0.636 and 18/34 ≈ 0.529.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq5" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 5: Study Location &amp; On-Time Assignment</div>
+                        <div class="item-topic">Topic 2.1: Two-Way Tables &amp; Conditional Probability</div>
+                        <div class="item-full-text">
+                            <div>Among 120 students, study location and whether an assignment was turned in on time were recorded. Among on-time assignments, what proportion were done in the library?<br><br><table class="data-table"><tbody><tr><th></th><th>On time</th><th>Late</th><th>Total</th></tr><tr><td><b>Library</b></td><td>54</td><td>6</td><td>60</td></tr><tr><td><b>Home</b></td><td>42</td><td>18</td><td>60</td></tr><tr><td><b>Total</b></td><td>96</td><td>24</td><td>120</td></tr></tbody></table></div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.45 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.50 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.5625 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.90
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq6" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 6: Pet Ownership &amp; Sports Team</div>
+                        <div class="item-topic">Topic 2.1: Two-Way Tables &amp; Conditional Probability</div>
+                        <div class="item-full-text">
+                            <div>In a survey of 160 students, 72 have a pet, 48 are on a team, and 24 have both. Find P(pet | team).</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.15 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.30 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.50 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.60
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq7" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 7: Planner Use &amp; On-Time Submission Independence</div>
+                        <div class="item-topic">Topic 2.2: Testing for Independence</div>
+                        <div class="item-full-text">
+                            <div>In a survey of 200 students, 80 use a planner. Of planner users, 60 submit homework on time; of nonusers, 66 submit on time. Are planner use and on-time submission independent?<br><br><table class="data-table"><tbody><tr><th>Planner</th><th>On time</th><th>Not on time</th><th>Total</th></tr><tr><td><b>Yes</b></td><td>60</td><td>20</td><td>80</td></tr><tr><td><b>No</b></td><td>66</td><td>54</td><td>120</td></tr><tr><td><b>Total</b></td><td>126</td><td>74</td><td>200</td></tr></tbody></table></div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) Yes, since P(on time | yes) = 0.75 equals P(on time) = 0.63. &nbsp;&nbsp;&nbsp;&nbsp; B) No, because 0.75 differs from 0.63. &nbsp;&nbsp;&nbsp;&nbsp; C) Yes, because 60/126 ≈ 0.476 equals 80/200 = 0.40. &nbsp;&nbsp;&nbsp;&nbsp; D) No, because P(yes and on time) = 0.30.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq8" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 8: Sports Participation by Grade Group</div>
+                        <div class="item-topic">Topic 2.1: Two-Way Tables &amp; Conditional Probability</div>
+                        <div class="item-full-text">
+                            <div>Sports participation was recorded by grade group. Find P(upperclass | no sport).<br><br><table class="data-table"><tbody><tr><th></th><th>Sport</th><th>No sport</th><th>Total</th></tr><tr><td><b>Freshman</b></td><td>45</td><td>55</td><td>100</td></tr><tr><td><b>Upperclass</b></td><td>75</td><td>125</td><td>200</td></tr><tr><td><b>Total</b></td><td>120</td><td>180</td><td>300</td></tr></tbody></table></div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.1833 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.4167 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.6000 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.6944
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq9" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 9: Sports &amp; Instrument Union Rule</div>
+                        <div class="item-topic">Topic 2.3: General Probability &amp; Tree Diagrams</div>
+                        <div class="item-full-text">
+                            <div>Fifty-five percent of students play a sport, 38% play an instrument, and 20% do both. What is the probability that a randomly selected student plays a sport or an instrument?</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.20 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.73 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.93 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.38
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq10" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 10: Complement &amp; Addition Rule</div>
+                        <div class="item-topic">Topic 2.3: General Probability &amp; Tree Diagrams</div>
+                        <div class="item-full-text">
+                            <div>Suppose P(A) = 0.42, P(B) = 0.35, and P(A ∩ B) = 0.12. Find the probability that neither A nor B occurs.</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.12 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.35 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.42 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.65
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq11" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 11: Drawing Card Union Probability</div>
+                        <div class="item-topic">Topic 2.3: General Probability &amp; Tree Diagrams</div>
+                        <div class="item-full-text">
+                            <div>One card is selected at random from a standard 52-card deck. What is the probability of drawing a heart or a king?</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 4/52 &nbsp;&nbsp;&nbsp;&nbsp; B) 16/52 &nbsp;&nbsp;&nbsp;&nbsp; C) 17/52 &nbsp;&nbsp;&nbsp;&nbsp; D) 13/52
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq12" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 12: Mutually Exclusive Lunch Events</div>
+                        <div class="item-topic">Topic 2.3: General Probability &amp; Tree Diagrams</div>
+                        <div class="item-full-text">
+                            <div>Thirty percent of students have a school lunch and 18% bring lunch; these categories are mutually exclusive. What is the probability that a student has either lunch arrangement?</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.12 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.30 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.48 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.70
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq13" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 13: Bus Delay Tree Diagram</div>
+                        <div class="item-topic">Topic 2.3: General Probability &amp; Tree Diagrams</div>
+                        <div class="item-full-text">
+                            <div>A weather forecast gives P(rain) = 0.30. If it rains, the probability that the school bus is delayed is 0.40; if it does not rain, that probability is 0.10. Find the probability that the bus is delayed.</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.12 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.19 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.30 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.40
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq14" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 14: Health Screening Total Probability</div>
+                        <div class="item-topic">Topic 2.3: General Probability &amp; Tree Diagrams</div>
+                        <div class="item-full-text">
+                            <div>A clinic’s screening flags 8% of students. The probability of the condition is 0.75 given a flag and 0.02 given no flag. Find the probability that a randomly selected student has the condition.</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.0184 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.0600 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.0784 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.7500
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq15" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 15: Bus Riders Late Arrival</div>
+                        <div class="item-topic">Topic 2.3: General Probability &amp; Tree Diagrams</div>
+                        <div class="item-full-text">
+                            <div>Forty percent of students ride the bus. The probability of arriving on time is 0.80 for a bus rider and 0.90 for a student who does not ride the bus. Find the probability that a randomly selected student arrives late.</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.10 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.14 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.20 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.86
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq16" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 16: Snack Supplier Defect Rate</div>
+                        <div class="item-topic">Topic 2.3: General Probability &amp; Tree Diagrams</div>
+                        <div class="item-full-text">
+                            <div>A school orders snacks from supplier A 70% of the time and supplier B 30% of the time. The defect probabilities are 0.02 for A and 0.05 for B. Find the probability that a snack is defective.</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.014 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.029 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.035 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.070
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq17" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 17: Discrete RV Mean μ_X</div>
+                        <div class="item-topic">Topic 2.4: Discrete Random Variables</div>
+                        <div class="item-full-text">
+                            <div>In a game, the points X have this probability distribution. Find the mean μ_X.<br><br><table class="data-table"><tbody><tr><th>x</th><th>0</th><th>1</th><th>2</th><th>3</th></tr><tr><td><b>P(X=x)</b></td><td>0.10</td><td>0.30</td><td>0.40</td><td>0.20</td></tr></tbody></table></div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.40 &nbsp;&nbsp;&nbsp;&nbsp; B) 1.70 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.81 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.90
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq18" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 18: Discrete RV Cumulative P(X ≥ 2)</div>
+                        <div class="item-topic">Topic 2.4: Discrete Random Variables</div>
+                        <div class="item-full-text">
+                            <div>A game awards snack points according to the distribution below. Find P(X ≥ 2).<br><br><table class="data-table"><tbody><tr><th>x</th><th>0</th><th>1</th><th>2</th><th>3</th></tr><tr><td><b>P(X=x)</b></td><td>0.20</td><td>0.20</td><td>0.50</td><td>0.10</td></tr></tbody></table></div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.10 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.50 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.60 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.80
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq19" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 19: Soccer Goals Standard Deviation σ_X</div>
+                        <div class="item-topic">Topic 2.4: Discrete Random Variables</div>
+                        <div class="item-full-text">
+                            <div>The number of goals X scored in a game has the distribution below. Find the standard deviation σ_X.<br><br><table class="data-table"><tbody><tr><th>x</th><th>0</th><th>1</th><th>2</th><th>3</th></tr><tr><td><b>P(X=x)</b></td><td>0.25</td><td>0.50</td><td>0.20</td><td>0.05</td></tr></tbody></table></div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.65 goals &nbsp;&nbsp;&nbsp;&nbsp; B) 0.80 goals &nbsp;&nbsp;&nbsp;&nbsp; C) 1.05 goals &nbsp;&nbsp;&nbsp;&nbsp; D) 1.75 goals
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq20" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 20: Free-Throw Bonus Mean</div>
+                        <div class="item-topic">Topic 2.4: Discrete Random Variables</div>
+                        <div class="item-full-text">
+                            <div>A free-throw bonus X can be 0, 2, or 4 points, with probabilities 0.20, 0.50, and 0.30, respectively. Find the mean bonus.</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 1.96 points &nbsp;&nbsp;&nbsp;&nbsp; B) 2.20 points &nbsp;&nbsp;&nbsp;&nbsp; C) 1.40 points &nbsp;&nbsp;&nbsp;&nbsp; D) 0.30 points
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq21" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 21: Drill Laps Standard Deviation</div>
+                        <div class="item-topic">Topic 2.4: Discrete Random Variables</div>
+                        <div class="item-full-text">
+                            <div>The number of completed laps X in a drill has the probability distribution below. Find the standard deviation σ_X.<br><br><table class="data-table"><tbody><tr><th>x</th><th>0</th><th>1</th><th>2</th><th>3</th></tr><tr><td><b>P(X=x)</b></td><td>0.40</td><td>0.10</td><td>0.30</td><td>0.20</td></tr></tbody></table></div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 1.41 laps &nbsp;&nbsp;&nbsp;&nbsp; B) 1.19 laps &nbsp;&nbsp;&nbsp;&nbsp; C) 1.30 laps &nbsp;&nbsp;&nbsp;&nbsp; D) 3.10 laps
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq22" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 22: At Most One Outcome P(X ≤ 1)</div>
+                        <div class="item-topic">Topic 2.4: Discrete Random Variables</div>
+                        <div class="item-full-text">
+                            <div>A probability model for X is shown. Find P(X ≤ 1).<br><br><table class="data-table"><tbody><tr><th>x</th><th>0</th><th>1</th><th>2</th></tr><tr><td><b>P(X=x)</b></td><td>0.10</td><td>0.60</td><td>0.30</td></tr></tbody></table></div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.10 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.30 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.60 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.70
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq23" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 23: True/False Guessing Binomial pdf</div>
+                        <div class="item-topic">Topic 2.8: Binomial Probability Distributions</div>
+                        <div class="item-full-text">
+                            <div>A student guesses on 6 independent true-or-false questions, with probability p = 0.50 of answering each question correctly. If X is the number correct, find P(X = 4).</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.09375 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.234375 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.3125 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.015625
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq24" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 24: Seed Sprouting Complement</div>
+                        <div class="item-topic">Topic 2.8: Binomial Probability Distributions</div>
+                        <div class="item-full-text">
+                            <div>Each of 5 seeds sprouts independently with probability p = 0.80. If X is the number that sprout, find the probability that at least one seed fails to sprout.</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.00032 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.32768 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.67232 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.80000
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq25" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 25: Basketball Shots Binomial pdf</div>
+                        <div class="item-topic">Topic 2.8: Binomial Probability Distributions</div>
+                        <div class="item-full-text">
+                            <div>A player makes a shot with probability p = 0.30 on each independent attempt. For n = 8 attempts, let X be the number made. Find P(X = 2).</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.296476 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.254121 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.744310 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.255690
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq26" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 26: Defect-Free Items Cumulative</div>
+                        <div class="item-topic">Topic 2.8: Binomial Probability Distributions</div>
+                        <div class="item-full-text">
+                            <div>Each of n = 10 items is independently defect-free with probability p = 0.40. Let X be the number of defect-free items. Find P(X ≥ 3).</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.167290 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.214991 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.832710 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.993953
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq27" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 27: Appointment Cancellations cdf</div>
+                        <div class="item-topic">Topic 2.8: Binomial Probability Distributions</div>
+                        <div class="item-full-text">
+                            <div>Each of 12 appointments is independently cancelled with probability p = 0.20. Let X be the number of cancellations. Find P(X ≤ 2).</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.283468 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.441654 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.558346 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.236223
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq28" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 28: Free Throw Binomial Mean &amp; SD</div>
+                        <div class="item-topic">Topic 2.8: Binomial Probability Distributions</div>
+                        <div class="item-full-text">
+                            <div>A player makes each free throw independently with probability p = 0.60. For n = 9 free throws, let X be the number made. Which pair gives the mean and standard deviation of X?</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) μ_X = 5.4 shots, σ_X ≈ 1.47 shots &nbsp;&nbsp;&nbsp;&nbsp; B) μ_X = 3.6 shots, σ_X ≈ 1.47 shots &nbsp;&nbsp;&nbsp;&nbsp; C) μ_X = 5.4 shots, σ_X ≈ 2.32 shots &nbsp;&nbsp;&nbsp;&nbsp; D) μ_X = 0.6 shots, σ_X = 9 shots
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq29" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 29: Success Count Binomial pdf</div>
+                        <div class="item-topic">Topic 2.8: Binomial Probability Distributions</div>
+                        <div class="item-full-text">
+                            <div>Each of n = 15 independent trials is a success with probability p = 0.10. If X is the number of successes, find P(X = 2).</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.128505 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.266896 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.815939 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.184061
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq30" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 30: Newsletter Email Clicks Mean &amp; SD</div>
+                        <div class="item-topic">Topic 2.8: Binomial Probability Distributions</div>
+                        <div class="item-full-text">
+                            <div>A school newsletter has a click rate of p = 0.35. For n = 20 independent emails, let X be the number clicked. Which pair gives the mean and standard deviation of X?</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) μ_X = 7 clicks, σ_X ≈ 2.13 clicks &nbsp;&nbsp;&nbsp;&nbsp; B) μ_X = 13 clicks, σ_X ≈ 2.13 clicks &nbsp;&nbsp;&nbsp;&nbsp; C) μ_X = 7 clicks, σ_X ≈ 2.65 clicks &nbsp;&nbsp;&nbsp;&nbsp; D) μ_X = 0.35 clicks, σ_X = 20 clicks
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq31" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 31: Daily Library Visitors Left Tail</div>
+                        <div class="item-topic">Topic 2.6: Normal Distribution Models</div>
+                        <div class="item-full-text">
+                            <div>The number of daily library visitors is modeled by X ~ N(68, 8), where the mean and standard deviation are measured in visitors. Find P(X &lt; 76).</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.1587 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.5000 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.8413 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.9772
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq32" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 32: Package Weight Middle Probability</div>
+                        <div class="item-topic">Topic 2.6: Normal Distribution Models</div>
+                        <div class="item-full-text">
+                            <div>Package weights are modeled by X ~ N(500, 40) grams. Find P(460 &lt; X &lt; 540).</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.3413 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.6827 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.9545 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.5000
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq33" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 33: Test Score 90th Percentile</div>
+                        <div class="item-topic">Topic 2.6: Normal Distribution Models</div>
+                        <div class="item-full-text">
+                            <div>Test scores are modeled by X ~ N(72, 9) points. Find the 90th percentile.</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 60.5 points &nbsp;&nbsp;&nbsp;&nbsp; B) 72 points &nbsp;&nbsp;&nbsp;&nbsp; C) 81 points &nbsp;&nbsp;&nbsp;&nbsp; D) 83.5 points
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq34" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 34: Wait Time Below Cutoff</div>
+                        <div class="item-topic">Topic 2.6: Normal Distribution Models</div>
+                        <div class="item-full-text">
+                            <div>Waiting times are modeled by X ~ N(42, 6) minutes. Find P(X &lt; 35).</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.1217 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.8783 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.1587 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.9088
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq35" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 35: Battery Lifetime Interval</div>
+                        <div class="item-topic">Topic 2.6: Normal Distribution Models</div>
+                        <div class="item-full-text">
+                            <div>Battery life is modeled by X ~ N(120, 15) hours. Find P(100 &lt; X &lt; 140).</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.1824 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.6827 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.8176 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.9088
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq36" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 36: Test Score Right Tail</div>
+                        <div class="item-topic">Topic 2.6: Normal Distribution Models</div>
+                        <div class="item-full-text">
+                            <div>Scores are modeled by X ~ N(500, 100) points. Find P(X &gt; 650).</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.9332 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.0668 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.5000 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.8664
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq37" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 37: Daily Temperature Below Cutoff</div>
+                        <div class="item-topic">Topic 2.6: Normal Distribution Models</div>
+                        <div class="item-full-text">
+                            <div>Daily temperatures are modeled by X ~ N(18, 4) degrees Celsius. Find the probability that a daily temperature is below 14°C.</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.1587 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.8413 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.5000 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.9772
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq38" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 38: Height 25th Percentile</div>
+                        <div class="item-topic">Topic 2.6: Normal Distribution Models</div>
+                        <div class="item-full-text">
+                            <div>Heights are modeled by X ~ N(170, 10) centimeters. What height is the 25th percentile?</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 160.0 cm &nbsp;&nbsp;&nbsp;&nbsp; B) 163.3 cm &nbsp;&nbsp;&nbsp;&nbsp; C) 170.0 cm &nbsp;&nbsp;&nbsp;&nbsp; D) 176.7 cm
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq39" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 39: Student Support Poll Normal Approx</div>
+                        <div class="item-topic">Topic 2.9: Normal Approximation to Binomial</div>
+                        <div class="item-full-text">
+                            <div>A poll finds that each of n = 100 independently sampled students supports a proposal with probability p = 0.40. Let X be the number who support it. Use Y ~ N(40, 4.899) and normalcdf directly, with no continuity correction, to approximate P(35 &lt; X &lt; 45).</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.3074 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.6926 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.8463 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.1537
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq40" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 40: Package Delay Normal Approx</div>
+                        <div class="item-topic">Topic 2.9: Normal Approximation to Binomial</div>
+                        <div class="item-full-text">
+                            <div>In a group of n = 80 independently handled packages, each has probability p = 0.30 of being delayed. Let X be the number delayed. Use Y ~ N(24, 4.099) and normalcdf directly, with no continuity correction, to approximate P(X &lt; 30).</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.0716 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.5000 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.9284 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.9964
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq41" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 41: Elective Selection &amp; Employment</div>
+                        <div class="item-topic">Topic 2.1: Two-Way Tables &amp; Conditional Probability</div>
+                        <div class="item-full-text">
+                            <div>A survey of 150 students recorded elective course choice and employment status. Find P(Art | Employed).<br><br><table class="data-table"><tbody><tr><th></th><th>Employed</th><th>Unemployed</th><th>Total</th></tr><tr><td><b>Art</b></td><td>30</td><td>20</td><td>50</td></tr><tr><td><b>STEM</b></td><td>45</td><td>55</td><td>100</td></tr><tr><td><b>Total</b></td><td>75</td><td>75</td><td>150</td></tr></tbody></table></div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.20 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.333 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.40 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.60
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq42" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 42: Foreign Language &amp; AP Course Enrollment</div>
+                        <div class="item-topic">Topic 2.1: Two-Way Tables &amp; Conditional Probability</div>
+                        <div class="item-full-text">
+                            <div>In a senior class, foreign language study and enrollment in AP courses were recorded. Find P(AP | No Language).<br><br><table class="data-table"><tbody><tr><th></th><th>AP Course</th><th>No AP Course</th><th>Total</th></tr><tr><td><b>Language</b></td><td>60</td><td>40</td><td>100</td></tr><tr><td><b>No Language</b></td><td>20</td><td>80</td><td>100</td></tr><tr><td><b>Total</b></td><td>80</td><td>120</td><td>200</td></tr></tbody></table></div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.10 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.20 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.25 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.50
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq43" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 43: Parking Permit &amp; Extra-Curricular Activity</div>
+                        <div class="item-topic">Topic 2.1: Two-Way Tables &amp; Conditional Probability</div>
+                        <div class="item-full-text">
+                            <div>Among 250 high school seniors, parking permit status and participation in after-school clubs were surveyed. Find P(Permit | Club Member).<br><br><table class="data-table"><tbody><tr><th></th><th>Club Member</th><th>No Club</th><th>Total</th></tr><tr><td><b>Permit</b></td><td>70</td><td>80</td><td>150</td></tr><tr><td><b>No Permit</b></td><td>30</td><td>70</td><td>100</td></tr><tr><td><b>Total</b></td><td>100</td><td>150</td><td>250</td></tr></tbody></table></div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.28 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.467 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.70 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.75
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq44" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 44: Tutoring Attendance &amp; Exam Passing Independence</div>
+                        <div class="item-topic">Topic 2.2: Testing for Independence</div>
+                        <div class="item-full-text">
+                            <div>In a statistics class of 100 students, 40 attended tutoring. Of those who attended tutoring, 32 passed the final exam. Of those who did not attend, 36 passed. Are attending tutoring and passing the exam independent?</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) Yes, because P(Pass | Tutoring) = 0.80 and P(Pass) = 0.68. &nbsp;&nbsp;&nbsp;&nbsp; B) No, because P(Pass | Tutoring) = 0.80 while P(Pass) = 0.68. &nbsp;&nbsp;&nbsp;&nbsp; C) Yes, because 32/100 = 0.32 and 36/100 = 0.36. &nbsp;&nbsp;&nbsp;&nbsp; D) No, because 32 + 36 = 68.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq45" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 45: Cafeteria Preference &amp; Grade Level Independence</div>
+                        <div class="item-topic">Topic 2.2: Testing for Independence</div>
+                        <div class="item-full-text">
+                            <div>A school administrator wants to determine if lunch preference (Hot Lunch vs. Salad Bar) is independent of grade level (Junior vs. Senior). Among 100 Juniors, 60 prefer Hot Lunch. Among 100 Seniors, 60 prefer Hot Lunch. Are lunch preference and grade level independent?</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) No, because 60 = 60. &nbsp;&nbsp;&nbsp;&nbsp; B) Yes, because P(Hot Lunch | Junior) = 0.60 and P(Hot Lunch | Senior) = 0.60. &nbsp;&nbsp;&nbsp;&nbsp; C) No, because P(Junior) = 0.50. &nbsp;&nbsp;&nbsp;&nbsp; D) Cannot be determined without total probability.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq46" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 46: Advanced Conditioning (Bayes' Context)</div>
+                        <div class="item-topic">Topic 2.3: General Probability &amp; Tree Diagrams</div>
+                        <div class="item-full-text">
+                            <div>In a computer lab, 60% of computers are Brand X and 40% are Brand Y. Brand X has a hardware glitch 5% of the time, while Brand Y has a glitch 10% of the time. If a randomly chosen computer has a glitch, what is the probability it is Brand X?</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.03 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.07 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.4286 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.5714
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq47" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 47: Independent Event Intersection</div>
+                        <div class="item-topic">Topic 2.3: General Probability &amp; Tree Diagrams</div>
+                        <div class="item-full-text">
+                            <div>Events A and B are independent. If P(A) = 0.60 and P(B) = 0.35, find P(A ∩ Bᶜ).</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.21 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.39 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.60 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.74
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq48" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 48: Linear Transformation Mean</div>
+                        <div class="item-topic">Topic 2.4: Discrete Random Variables</div>
+                        <div class="item-full-text">
+                            <div>Let X be the number of raffle tickets purchased by a student, with E(X) = 2.4. Each ticket costs $3, plus a flat processing fee of $1 per student. If Y = 3X + 1 is the total dollar amount spent, find E(Y).</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) $7.20 &nbsp;&nbsp;&nbsp;&nbsp; B) $8.20 &nbsp;&nbsp;&nbsp;&nbsp; C) $10.20 &nbsp;&nbsp;&nbsp;&nbsp; D) $11.20
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq49" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 49: Linear Transformation Variance</div>
+                        <div class="item-topic">Topic 2.4: Discrete Random Variables</div>
+                        <div class="item-full-text">
+                            <div>Let X have standard deviation σ_X = 1.5. If a new variable is defined as Y = 4 - 2X, what is the standard deviation σ_Y?</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) -3.0 &nbsp;&nbsp;&nbsp;&nbsp; B) 1.5 &nbsp;&nbsp;&nbsp;&nbsp; C) 3.0 &nbsp;&nbsp;&nbsp;&nbsp; D) 6.0
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq50" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 50: Expected Profit Calculation</div>
+                        <div class="item-topic">Topic 2.4: Discrete Random Variables</div>
+                        <div class="item-full-text">
+                            <div>A car owner buys a mechanical repair warranty for $200. The probability of needing a $1,000 repair is 0.15, and the probability of no repair is 0.85. What is the company's expected profit per warranty sold?</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) -$50 &nbsp;&nbsp;&nbsp;&nbsp; B) $50 &nbsp;&nbsp;&nbsp;&nbsp; C) $150 &nbsp;&nbsp;&nbsp;&nbsp; D) $850
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq51" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 51: Z-Score Comparison</div>
+                        <div class="item-topic">Topic 2.6: Normal Distribution Models</div>
+                        <div class="item-full-text">
+                            <div>Student A scored 82 on an exam with mean 75 and SD 5. Student B scored 88 on an exam with mean 80 and SD 8. Which student performed relatively better?</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) Student A (Z = 1.40 vs Z = 1.00) &nbsp;&nbsp;&nbsp;&nbsp; B) Student B (Z = 1.00 vs Z = 0.80) &nbsp;&nbsp;&nbsp;&nbsp; C) Both performed equally well. &nbsp;&nbsp;&nbsp;&nbsp; D) Cannot be determined without sample sizes.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq52" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 52: Interquartile Range (IQR) of Normal Distribution</div>
+                        <div class="item-topic">Topic 2.6: Normal Distribution Models</div>
+                        <div class="item-full-text">
+                            <div>For a Normal distribution X ~ N(100, 15), what is the approximate Interquartile Range (IQR = Q3 - Q1)?</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 10.1 &nbsp;&nbsp;&nbsp;&nbsp; B) 15.0 &nbsp;&nbsp;&nbsp;&nbsp; C) 20.2 &nbsp;&nbsp;&nbsp;&nbsp; D) 30.0
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq53" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 53: Inverse Normal Top 10% Cutoff</div>
+                        <div class="item-topic">Topic 2.6: Normal Distribution Models</div>
+                        <div class="item-full-text">
+                            <div>The weights of apples are normally distributed with mean 200 grams and SD 20 grams. The heaviest 10% of apples are classified as 'Jumbo'. What is the minimum weight for a Jumbo apple?</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 174.4 g &nbsp;&nbsp;&nbsp;&nbsp; B) 225.6 g &nbsp;&nbsp;&nbsp;&nbsp; C) 232.9 g &nbsp;&nbsp;&nbsp;&nbsp; D) 240.0 g
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq54" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 54: Binomial Exact At Most Calculation</div>
+                        <div class="item-topic">Topic 2.8: Binomial Probability Distributions</div>
+                        <div class="item-full-text">
+                            <div>A manufacturer knows 5% of lightbulbs are defective. In a random sample of 10 bulbs, what is the probability that at most 1 bulb is defective?</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.3151 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.5987 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.9139 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.9885
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq55" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 55: Binomial Variance Calculation</div>
+                        <div class="item-topic">Topic 2.8: Binomial Probability Distributions</div>
+                        <div class="item-full-text">
+                            <div>A multiple-choice test has 25 questions, each with 4 options. A student purely guesses on all questions. What is the variance of the number of correct answers?</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 1.25 &nbsp;&nbsp;&nbsp;&nbsp; B) 3.75 &nbsp;&nbsp;&nbsp;&nbsp; C) 4.6875 &nbsp;&nbsp;&nbsp;&nbsp; D) 6.25
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq56" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 56: Checking Binomial (BINS) Setting</div>
+                        <div class="item-topic">Topic 2.8: Binomial Probability Distributions</div>
+                        <div class="item-full-text">
+                            <div>Which of the following settings does NOT describe a Binomial random variable?</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) Counting the number of red cards drawn from a deck when cards are drawn WITH replacement (n = 10). &nbsp;&nbsp;&nbsp;&nbsp; B) Counting the number of red cards drawn from a deck when cards are drawn WITHOUT replacement (n = 10). &nbsp;&nbsp;&nbsp;&nbsp; C) Tossing a fair coin 50 times and recording the number of heads. &nbsp;&nbsp;&nbsp;&nbsp; D) Rolling a 6-sided die 20 times and counting the number of times a 5 appears.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq57" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 57: Binomial Probability Greater Than Cutoff</div>
+                        <div class="item-topic">Topic 2.8: Binomial Probability Distributions</div>
+                        <div class="item-full-text">
+                            <div>A surgeon has an 80% success rate on a delicate procedure. If she performs 7 independent procedures, what is the probability of achieving at least 6 successes?</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.2753 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.3670 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.5767 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.6226
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq58" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 58: Checking Large Sample Conditions</div>
+                        <div class="item-topic">Topic 2.9: Normal Approximation to Binomial</div>
+                        <div class="item-full-text">
+                            <div>Under which sample size n and success probability p is the Normal approximation to the Binomial distribution appropriate?</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) n = 15, p = 0.20 &nbsp;&nbsp;&nbsp;&nbsp; B) n = 25, p = 0.30 &nbsp;&nbsp;&nbsp;&nbsp; C) n = 60, p = 0.30 &nbsp;&nbsp;&nbsp;&nbsp; D) n = 100, p = 0.05
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq59" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 59: Normal Approx Parameters</div>
+                        <div class="item-topic">Topic 2.9: Normal Approximation to Binomial</div>
+                        <div class="item-full-text">
+                            <div>A political campaign surveys 400 voters in a city where 60% support a candidate. Using a Normal approximation, what mean and standard deviation should be used for the number of supporters?</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) μ = 240, σ = 9.80 &nbsp;&nbsp;&nbsp;&nbsp; B) μ = 240, σ = 9.60 &nbsp;&nbsp;&nbsp;&nbsp; C) μ = 200, σ = 10.00 &nbsp;&nbsp;&nbsp;&nbsp; D) μ = 240, σ = 96.00
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="mcq60" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">MCQ 60: Normal Approx Right Tail Calculation</div>
+                        <div class="item-topic">Topic 2.9: Normal Approximation to Binomial</div>
+                        <div class="item-full-text">
+                            <div>In a large factory, 20% of parts require rework. In a random sample of 225 parts, use a Normal model Y ~ N(45, 6) to approximate the probability that more than 54 parts require rework, P(X &gt; 54).</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                A) 0.0668 &nbsp;&nbsp;&nbsp;&nbsp; B) 0.1587 &nbsp;&nbsp;&nbsp;&nbsp; C) 0.4332 &nbsp;&nbsp;&nbsp;&nbsp; D) 0.9332
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <div class="bank-section">
+                <h2>Free Response Question Bank (12 Items)</h2>
+                <div id="frq-bank-container">
+                <div class="item-card">
+                    <input type="checkbox" id="frq1" class="frq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">FRQ 1: Preferred Study Location &amp; Grade Level</div>
+                        <div class="item-topic">Topic 2.1: Two-Way Tables &amp; Conditional Probability</div>
+                        <div class="item-full-text">Dr. Osei surveyed 200 students at a high school about their preferred study location. Underclassmen are in grades 9–10, and Upperclassmen are in grades 11–12.<br><br><table class="data-table"><tbody><tr><th>Grade Level</th><th>Library</th><th>Home</th><th>Total</th></tr><tr><td><b>Underclassman</b></td><td>48</td><td>72</td><td>120</td></tr><tr><td><b>Upperclassman</b></td><td>52</td><td>28</td><td>80</td></tr><tr><td><b>Total</b></td><td>100</td><td>100</td><td>200</td></tr></tbody></table><br><b>A.</b> (i) Find P(Library). (ii) Find P(Upperclassman AND Library).<br><b>B.</b> (i) Find P(Underclassman OR Home, but not both). (ii) Interpret in context.<br><b>C.</b> (i) Find P(Library | Upperclassman). (ii) Interpret in context.<br><b>D.</b> Are 'prefers Library' and 'is Upperclassman' independent? Justify.</div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="frq2" class="frq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">FRQ 2: Drama &amp; Robotics Club Venn Diagram</div>
+                        <div class="item-topic">Topic 2.1: Two-Way Tables &amp; Conditional Probability</div>
+                        <div class="item-full-text">A middle school has 300 students. Of these students, 120 are members of the Drama Club, 90 are members of the Robotics Club, and 30 are members of both clubs.<br><br><b>A.</b> (i) Find P(Drama). (ii) Find P(both clubs).<br><b>B.</b> (i) Find P(exactly one club). (ii) Find P(neither club).<br><b>C.</b> (i) Find P(Drama | Robotics). (ii) Interpret in context.<br><b>D.</b> Are Drama and Robotics club memberships independent? Justify.</div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="frq3" class="frq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">FRQ 3: Weather and Commute Delays</div>
+                        <div class="item-topic">Topic 2.3: General Probability &amp; Tree Diagrams</div>
+                        <div class="item-full-text">Mr. Nakamura studied rainy mornings and commute delays. P(rainy) = 0.35. Given rain, P(delay) = 0.70. Given no rain, P(delay) = 0.20.<br><br><b>A.</b> (i) Find P(rainy AND delay). (ii) Find P(non-rainy AND delay).<br><b>B.</b> (i) Find P(delay | rainy). (ii) Interpret in context.<br><b>C.</b> (i) Find P(delay). (ii) Interpret in context.<br><b>D.</b> Are 'rainy morning' and 'commute delay' independent? Justify.</div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="frq4" class="frq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">FRQ 4: Extracurricular Activities Distribution</div>
+                        <div class="item-topic">Topic 2.4: Discrete Random Variables</div>
+                        <div class="item-full-text">Dr. Osei studies extracurricular activities per student. Let X be the number of activities.<br><br><table class="data-table"><tbody><tr><th>x</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr><tr><td><b>P(X=x)</b></td><td>0.05</td><td>0.15</td><td>0.30</td><td>0.25</td><td>0.15</td><td>0.10</td></tr></tbody></table><br><b>A.</b> Identify population and variable type.<br><b>B.</b> (i) Find P(X ≥ 3). (ii) Find P(1 ≤ X ≤ 3).<br><b>C.</b> Find mean μ_X, standard deviation σ_X, and interpret both.<br><b>D.</b> Evaluate claim that a typical student participates in 1–3 activities using μ_X and σ_X.</div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="frq5" class="frq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">FRQ 5: Exercise Days Per Week</div>
+                        <div class="item-topic">Topic 2.4: Discrete Random Variables</div>
+                        <div class="item-full-text">Ms. Nair studies days per week college students exercise.<br><br><table class="data-table"><tbody><tr><th>x</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th></tr><tr><td><b>P(X=x)</b></td><td>0.10</td><td>0.12</td><td>0.18</td><td>0.22</td><td>0.18</td><td>0.10</td><td>0.06</td><td>0.04</td></tr></tbody></table><br><b>A.</b> Identify population and variable type.<br><b>B.</b> (i) Find P(X ≤ 2). (ii) Find P(3 ≤ X ≤ 5).<br><b>C.</b> Find mean μ_X, standard deviation σ_X, and interpret both.<br><b>D.</b> Find probability student meets CDC 3-day recommendation.</div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="frq6" class="frq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">FRQ 6: Sleep Hours Per Night</div>
+                        <div class="item-topic">Topic 2.4: Discrete Random Variables</div>
+                        <div class="item-full-text">Mr. Webb studies hours of sleep per night among high school seniors.<br><br><table class="data-table"><tbody><tr><th>x</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th></tr><tr><td><b>P(X=x)</b></td><td>0.08</td><td>0.17</td><td>0.25</td><td>0.28</td><td>0.15</td><td>0.07</td></tr></tbody></table><br><b>A.</b> Identify population and variable type.<br><b>B.</b> (i) Find P(X &lt; 7). (ii) Find P(X ≥ 8).<br><b>C.</b> Find mean μ_X, standard deviation σ_X, and interpret both.<br><b>D.</b> CDC recommends ≥ 8 hours. Evaluate whether meeting this is typical.</div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="frq7" class="frq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">FRQ 7: Newborn Birth Weight Normal Model</div>
+                        <div class="item-topic">Topic 2.6: Normal Distribution Models</div>
+                        <div class="item-full-text">Full-term newborn birth weights are approximately normally distributed with mean 7.5 lbs and SD 1.1 lbs.<br><br><b>A.</b> State model, population, and variable.<br><b>B.</b> (i) Find P(weight &lt; 6.0 lbs). (ii) Find P(7.0 &lt; weight &lt; 9.0 lbs).<br><b>C.</b> (i) Find cutoff for bottom 10%. (ii) Find cutoff for top 25%. (iii) Interpret both.<br><b>D.</b> Verify/refute claim that 95% weigh between 5.3 and 9.7 lbs.</div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="frq8" class="frq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">FRQ 8: City Workers' Commute Times</div>
+                        <div class="item-topic">Topic 2.6: Normal Distribution Models</div>
+                        <div class="item-full-text">Commute times are normally distributed with mean 42 minutes and SD 9 minutes.<br><br><b>A.</b> State model, population, and variable.<br><b>B.</b> (i) Find P(commute &gt; 55 min). (ii) Find P(30 &lt; commute &lt; 50 min).<br><b>C.</b> (i) Find top 5% cutoff. (ii) Find 20th percentile. (iii) Interpret both.<br><b>D.</b> Verify/refute claim that fewer than 15% commute under 30 minutes.</div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="frq9" class="frq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">FRQ 9: 10th Grade Reading Assessment</div>
+                        <div class="item-topic">Topic 2.6: Normal Distribution Models</div>
+                        <div class="item-full-text">Reading scores are normally distributed with mean 520 and SD 85.<br><br><b>A.</b> State model, population, and variable.<br><b>B.</b> (i) Find P(score &gt; 650). (ii) Find P(450 &lt; score &lt; 600).<br><b>C.</b> (i) Find top 8% minimum score. (ii) Find 35th percentile. (iii) Interpret both.<br><b>D.</b> Comment on district claim that 70% score between 450 and 620.</div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="frq10" class="frq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">FRQ 10: Homework Completion Binomial</div>
+                        <div class="item-topic">Topic 2.8: Binomial Probability Distributions</div>
+                        <div class="item-full-text">Probability of completing all homework is p = 0.65, sample size n = 80.<br><br><b>A.</b> Check BINS conditions, define success/failure, state n, p, and X.<br><b>B.</b> (i) Find P(X = 50). (ii) Find P(X ≤ 45).<br><b>C.</b> Find mean μ and SD σ. Interpret both.<br><b>D.</b> Use normal approximation to find P(X &gt; 55) showing 4 steps.</div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="frq11" class="frq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">FRQ 11: Water Intake Binomial Model</div>
+                        <div class="item-topic">Topic 2.8: Binomial Probability Distributions</div>
+                        <div class="item-full-text">Probability an adult meets water intake recommendation is p = 0.40, sample size n = 120.<br><br><b>A.</b> Check BINS conditions, define success/failure, state n, p, and X.<br><b>B.</b> (i) Find P(X = 45). (ii) Find P(X ≥ 55).<br><b>C.</b> Find mean μ and SD σ. Interpret both.<br><b>D.</b> Use normal approximation to find P(40 ≤ X ≤ 55) showing 4 steps.</div>
+                    </div>
+                </div>
+            
+                <div class="item-card">
+                    <input type="checkbox" id="frq12" class="frq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">FRQ 12: Daily Student Stress</div>
+                        <div class="item-topic">Topic 2.8: Binomial Probability Distributions</div>
+                        <div class="item-full-text">Probability a student reports daily stress is p = 0.55, sample size n = 100.<br><br><b>A.</b> Check BINS conditions, define success/failure, state n, p, and X.<br><b>B.</b> (i) Find P(X = 60). (ii) Find P(X ≤ 49).<br><b>C.</b> Find mean μ and SD σ. Interpret both.<br><b>D.</b> Use normal approximation to find P(X ≥ 60) showing 4 steps.</div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <div class="launch-bar">
+            <div>
+                Selected: <strong id="selected-mcq-count">16</strong> MCQs | <strong id="selected-frq-count">0</strong> FRQs
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn btn-export" onclick="exportStandaloneStudentHTML()">💾 Export Standalone Student Test (.html)</button>
+                <button class="btn btn-print" onclick="prepareAndPrintPaperTest()">🖨️ Print Paper Test</button>
+<button class="btn btn-print" onclick="printAnswerKey()">🔑 Print Answer Key</button>
+                <button class="btn btn-digital" onclick="launchDigitalBluebookExam()">▶️ Preview Digital Exam</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW 2: STUDENT BLUEBOOK EXAM SIMULATOR -->
+    <div id="student-view" class="hidden">
+        <div class="bb-topbar">
+            <div>
+                <span id="bb-exam-title">AP Statistics Exam</span>
+                <span id="bb-student-tag" style="margin-left: 15px; font-weight: normal; opacity: 0.85;"></span>
+            </div>
+            <div class="bb-tools">
+                <button class="bb-tool-btn" onclick="openModal('desmos-modal')">🧮 Desmos Graphing Calculator</button>
+                <button class="bb-tool-btn" onclick="openModal('formula-modal')">📄 Formula Sheet (Unit 2)</button>
+            </div>
+        </div>
+
+        <div class="bb-main">
+            <div class="bb-pane bb-pane-left">
+                <h3 id="bb-question-number" style="margin-bottom: 12px; color: var(--cb-blue);">Question 1</h3>
+                <div id="bb-question-prompt" style="font-size: 1.05rem; line-height: 1.6;"></div>
+            </div>
+
+            <div class="bb-pane bb-pane-right">
+                <div id="bb-mcq-container" class="mcq-options"></div>
+
+                <div id="bb-frq-container" class="hidden">
+                    <div class="symbol-toolbar">
+                        <span style="font-size: 0.85rem; font-weight: bold;">Insert Math Symbol:</span>
+                        <select class="symbol-select" onchange="insertSymbol(this.value); this.selectedIndex=0;">
+                            <option value="" disabled="" selected="">Select Symbol...</option>
+                            <optgroup label="Probability Notation">
+                                <option value="P(A)">P(A)</option>
+                                <option value="P(A ∩ B)">P(A ∩ B) [Intersection / AND]</option>
+                                <option value="P(A ∪ B)">P(A ∪ B) [Union / OR]</option>
+                                <option value="P(A|B)">P(A|B) [Conditional]</option>
+                                <option value="P(Aᶜ)">P(Aᶜ) [Complement]</option>
+                            </optgroup>
+                            <optgroup label="Greek &amp; Parameters">
+                                <option value="μ">μ (Mean / Expected Value)</option>
+                                <option value="σ">σ (Standard Deviation)</option>
+                                <option value="σ²">σ² (Variance)</option>
+                                <option value="p̂">p̂ (Sample Proportion)</option>
+                                <option value="x̄">x̄ (Sample Mean)</option>
+                            </optgroup>
+                            <optgroup label="Inequalities &amp; Operators">
+                                <option value="≤">≤ (Less than or equal)</option>
+                                <option value="≥">≥ (Greater than or equal)</option>
+                                <option value="≠">≠ (Not equal)</option>
+                                <option value="±">± (Plus or minus)</option>
+                                <option value="√">√ (Square root)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <textarea id="frq-response-input" class="bb-textarea" placeholder="Type your full AP FRQ solution here..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="bb-footer">
+            <button class="btn" style="background: #e9ecef;" onclick="navigateQuestion(-1)">← Previous</button>
+            <span id="bb-question-tracker">Question 1 of 5</span>
+            <button id="bb-next-btn" class="btn btn-digital" onclick="navigateQuestion(1)">Next →</button>
+        </div>
+    </div>
+
+    <!-- VIEW 3: GRADED SUBMISSION REVIEW PAGE -->
+    <div id="teacher-review-view" class="hidden" style="padding: 30px; max-width: 1000px; margin: auto;">
+        <div style="background: white; border-radius: 8px; padding: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <h1 style="color: var(--cb-blue); margin-bottom: 8px;">Graded Exam Submission</h1>
+                    <p style="font-size: 1.1rem; color: #555;">Assessment: <strong id="review-test-title"></strong></p>
+                    <p style="font-size: 1.05rem; margin-top: 4px;">Student: <strong id="review-student-name">Preview Student</strong> | Period: <strong id="review-student-period">N/A</strong></p>
+                </div>
+                <button class="btn btn-export" onclick="printGradedSubmissionPDF()">📥 Save / Print PDF Report</button>
+            </div>
+            <div id="mcq-score-banner" style="background: #e6f4ea; border: 1px solid var(--correct-green); padding: 16px; border-radius: 6px; margin-top: 16px; font-size: 1.2rem; font-weight: bold; color: #137333;"></div>
+            <div id="security-audit-banner" style="background: #fff3cd; border: 1px solid #ffeba2; padding: 12px 16px; border-radius: 6px; margin-top: 12px; font-size: 0.95rem; color: #856404;"></div>
+        </div>
+
+        <div id="review-mcq-results" style="margin-bottom: 30px;">
+            <h2 style="color: var(--cb-blue); border-bottom: 2px solid var(--cb-blue); padding-bottom: 6px; margin-bottom: 16px;">MCQ Auto-Graded Breakdown</h2>
+            <div id="review-mcq-list"></div>
+        </div>
+
+        <div id="review-frq-results">
+            <h2 style="color: var(--cb-blue); border-bottom: 2px solid var(--cb-blue); padding-bottom: 6px; margin-bottom: 16px;">FRQ Responses for Teacher Grading</h2>
+            <div id="review-frq-list"></div>
+        </div>
+    </div>
+
+    <!-- MODALS & LOCKOUT OVERLAYS -->
+    <div id="lockout-warning-modal" class="modal hidden">
+        <div class="modal-content" style="height: auto; max-width: 500px; text-align: center; border-top: 6px solid #ffc107;">
+            <div class="modal-header" style="background: #ffc107; color: #222;">
+                <h3>⚠️ Exam Window Warning</h3>
+            </div>
+            <div class="modal-body" style="padding: 24px;">
+                <p style="font-size: 1.1rem; font-weight: bold; margin-bottom: 12px; color: #856404;">You navigated away from the exam window!</p>
+                <p style="font-size: 0.95rem; color: #444; margin-bottom: 20px;">This action has been logged in your exam audit trail. Navigating away again will lock your exam and require teacher unlocking.</p>
+                <button class="btn btn-digital" onclick="closeModal('lockout-warning-modal')">Resume Exam</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="hard-lockout-modal" class="modal hidden">
+        <div class="modal-content" style="height: auto; max-width: 500px; text-align: center; border-top: 6px solid var(--incorrect-red);">
+            <div class="modal-header" style="background: var(--incorrect-red);">
+                <h3>🔒 EXAM LOCKED</h3>
+            </div>
+            <div class="modal-body" style="padding: 24px;">
+                <p style="font-size: 1.1rem; font-weight: bold; color: var(--incorrect-red); margin-bottom: 12px;">Multiple Window Departures Detected</p>
+                <p style="font-size: 0.95rem; color: #444; margin-bottom: 20px;">Your exam is currently locked. Please raise your hand and ask your teacher to unlock your test.</p>
+                <input type="password" id="teacher-unlock-passcode" placeholder="Enter Teacher Passcode" style="padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; width: 80%; font-size: 1rem; text-align: center; margin-bottom: 16px;">
+                <br>
+                <button class="btn btn-export" onclick="attemptTeacherUnlock()">Unlock Exam</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="student-name-modal" class="modal hidden">
+        <div class="modal-content" style="height: auto; max-width: 480px; padding: 10px;">
+            <div class="modal-header">
+                <h3>Student Exam Entry</h3>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight: bold; display: block; margin-bottom: 6px;">Student Full Name:</label>
+                    <input type="text" id="entry-student-name" placeholder="e.g., Jane Doe" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="font-weight: bold; display: block; margin-bottom: 6px;">Class Period / Section:</label>
+                    <input type="text" id="entry-student-period" placeholder="e.g., Period 3" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px;">
+                </div>
+                <button class="btn btn-digital" style="width: 100%; padding: 14px;" onclick="confirmStudentEntryAndStart()">🚀 Begin Assessment</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="desmos-modal" class="modal hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Desmos Graphing Calculator</h3>
+            <button class="close-btn" onclick="closeModal('desmos-modal')">×</button>
+        </div>
+        <div class="modal-body" style="padding:0;">
+            <iframe src="https://www.desmos.com/calculator" width="100%" height="100%" style="border:none;"></iframe>
+        </div>
+    </div>
+</div>
+
+    <div id="formula-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>AP Statistics Formula Sheet (Unit 2: Probability Focus)</h3>
+                <button class="close-btn" onclick="closeModal('formula-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <h4>Probability Formulas:</h4>
+                <p style="margin: 8px 0;">• <strong>Conditional Probability:</strong> P(A|B) = P(A ∩ B) / P(B)</p>
+                <p style="margin: 8px 0;">• <strong>Addition Rule:</strong> P(A ∪ B) = P(A) + P(B) - P(A ∩ B)</p>
+                <p style="margin: 8px 0;">• <strong>Multiplication Rule (Independent Events):</strong> P(A ∩ B) = P(A) × P(B)</p>
+
+                <h4 style="margin-top: 15px;">Discrete Random Variables:</h4>
+                <p style="margin: 8px 0;">• <strong>Mean / Expected Value:</strong> μ_X = E(X) = Σ [x_i × P(x_i)]</p>
+                <p style="margin: 8px 0;">• <strong>Variance:</strong> σ_X² = Σ [(x_i - μ_X)² × P(x_i)]</p>
+
+                <h4 style="margin-top: 15px;">Binomial Probability Distribution:</h4>
+                <p style="margin: 8px 0;">• P(X = k) = (n! / (k!(n-k)!)) × p^k × (1-p)^(n-k)</p>
+                <p style="margin: 8px 0;">• <strong>Mean:</strong> μ_X = np &nbsp;|&nbsp; <strong>Standard Deviation:</strong> σ_X = √(np(1-p))</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const mcqTopics = [
+            "Topic 2.1: Two-Way Tables & Conditional Probability",
+            "Topic 2.2: Testing for Independence",
+            "Topic 2.3: General Probability & Tree Diagrams",
+            "Topic 2.4: Discrete Random Variables",
+            "Topic 2.6: Normal Distribution Models",
+            "Topic 2.8: Binomial Probability Distributions",
+            "Topic 2.9: Normal Approximation to Binomial"
+        ];
+
+        const mcqBank = [
+            { id: "mcq1", topic: mcqTopics[0], title: "MCQ 1: School Sport vs. Music Group", prompt: "At a school, students reported whether they play a school sport and whether they are in a music group. Find P(sport | music group).<br><br><table class='data-table'><tr><th></th><th>Music group</th><th>Not in music group</th><th>Total</th></tr><tr><td><b>Sport</b></td><td>36</td><td>24</td><td>60</td></tr><tr><td><b>No sport</b></td><td>24</td><td>36</td><td>60</td></tr><tr><td><b>Total</b></td><td>60</td><td>60</td><td>120</td></tr></table>", options: ["A) 0.30", "B) 0.50", "C) 0.60", "D) 0.75"], correct: 2 },
+            { id: "mcq2", topic: mcqTopics[0], title: "MCQ 2: Travel Method by Grade Level", prompt: "A survey of 200 students recorded their grade and how they travel to school. Find P(bus | Grade 10).<br><br><table class='data-table'><tr><th></th><th>Bus</th><th>Walk/bike</th><th>Total</th></tr><tr><td><b>Grade 9</b></td><td>48</td><td>32</td><td>80</td></tr><tr><td><b>Grade 10</b></td><td>36</td><td>44</td><td>80</td></tr><tr><td><b>Grade 11–12</b></td><td>24</td><td>16</td><td>40</td></tr><tr><td><b>Total</b></td><td>108</td><td>92</td><td>200</td></tr></table>", options: ["A) 0.18", "B) 0.40", "C) 0.45", "D) 0.54"], correct: 2 },
+            { id: "mcq3", topic: mcqTopics[0], title: "MCQ 3: Club Membership & Volunteering", prompt: "For 150 students, club membership and volunteering were recorded. Given that a student volunteers, find the probability that the student belongs to a club.<br><br><table class='data-table'><tr><th></th><th>Volunteer</th><th>Not volunteer</th><th>Total</th></tr><tr><td><b>Club</b></td><td>42</td><td>48</td><td>90</td></tr><tr><td><b>No club</b></td><td>18</td><td>42</td><td>60</td></tr><tr><td><b>Total</b></td><td>60</td><td>90</td><td>150</td></tr></table>", options: ["A) 0.28", "B) 0.40", "C) 0.47", "D) 0.70"], correct: 3 },
+            { id: "mcq4", topic: mcqTopics[1], title: "MCQ 4: Early-Bus Status & Breakfast Independence", prompt: "Among 100 randomly selected students, are early-bus status and eating breakfast independent?<br><br><table class='data-table'><tr><th></th><th>Breakfast</th><th>No breakfast</th><th>Total</th></tr><tr><td><b>Early bus</b></td><td>42</td><td>18</td><td>60</td></tr><tr><td><b>Later bus</b></td><td>24</td><td>16</td><td>40</td></tr><tr><td><b>Total</b></td><td>66</td><td>34</td><td>100</td></tr></table>", options: ["A) Yes, because 42/100 = 24/100.", "B) Yes, because 42/60 = 66/100.", "C) No, because P(breakfast | early bus) = 0.70 and P(breakfast) = 0.66.", "D) No, because 42/66 ≈ 0.636 and 18/34 ≈ 0.529."], correct: 2 },
+            { id: "mcq5", topic: mcqTopics[0], title: "MCQ 5: Study Location & On-Time Assignment", prompt: "Among 120 students, study location and whether an assignment was turned in on time were recorded. Among on-time assignments, what proportion were done in the library?<br><br><table class='data-table'><tr><th></th><th>On time</th><th>Late</th><th>Total</th></tr><tr><td><b>Library</b></td><td>54</td><td>6</td><td>60</td></tr><tr><td><b>Home</b></td><td>42</td><td>18</td><td>60</td></tr><tr><td><b>Total</b></td><td>96</td><td>24</td><td>120</td></tr></table>", options: ["A) 0.45", "B) 0.50", "C) 0.5625", "D) 0.90"], correct: 2 },
+            { id: "mcq6", topic: mcqTopics[0], title: "MCQ 6: Pet Ownership & Sports Team", prompt: "In a survey of 160 students, 72 have a pet, 48 are on a team, and 24 have both. Find P(pet | team).", options: ["A) 0.15", "B) 0.30", "C) 0.50", "D) 0.60"], correct: 2 },
+            { id: "mcq7", topic: mcqTopics[1], title: "MCQ 7: Planner Use & On-Time Submission Independence", prompt: "In a survey of 200 students, 80 use a planner. Of planner users, 60 submit homework on time; of nonusers, 66 submit on time. Are planner use and on-time submission independent?<br><br><table class='data-table'><tr><th>Planner</th><th>On time</th><th>Not on time</th><th>Total</th></tr><tr><td><b>Yes</b></td><td>60</td><td>20</td><td>80</td></tr><tr><td><b>No</b></td><td>66</td><td>54</td><td>120</td></tr><tr><td><b>Total</b></td><td>126</td><td>74</td><td>200</td></tr></table>", options: ["A) Yes, since P(on time | yes) = 0.75 equals P(on time) = 0.63.", "B) No, because 0.75 differs from 0.63.", "C) Yes, because 60/126 ≈ 0.476 equals 80/200 = 0.40.", "D) No, because P(yes and on time) = 0.30."], correct: 1 },
+            { id: "mcq8", topic: mcqTopics[0], title: "MCQ 8: Sports Participation by Grade Group", prompt: "Sports participation was recorded by grade group. Find P(upperclass | no sport).<br><br><table class='data-table'><tr><th></th><th>Sport</th><th>No sport</th><th>Total</th></tr><tr><td><b>Freshman</b></td><td>45</td><td>55</td><td>100</td></tr><tr><td><b>Upperclass</b></td><td>75</td><td>125</td><td>200</td></tr><tr><td><b>Total</b></td><td>120</td><td>180</td><td>300</td></tr></table>", options: ["A) 0.1833", "B) 0.4167", "C) 0.6000", "D) 0.6944"], correct: 3 },
+            { id: "mcq9", topic: mcqTopics[2], title: "MCQ 9: Sports & Instrument Union Rule", prompt: "Fifty-five percent of students play a sport, 38% play an instrument, and 20% do both. What is the probability that a randomly selected student plays a sport or an instrument?", options: ["A) 0.20", "B) 0.73", "C) 0.93", "D) 0.38"], correct: 1 },
+            { id: "mcq10", topic: mcqTopics[2], title: "MCQ 10: Complement & Addition Rule", prompt: "Suppose P(A) = 0.42, P(B) = 0.35, and P(A ∩ B) = 0.12. Find the probability that neither A nor B occurs.", options: ["A) 0.12", "B) 0.35", "C) 0.42", "D) 0.65"], correct: 1 },
+            { id: "mcq11", topic: mcqTopics[2], title: "MCQ 11: Drawing Card Union Probability", prompt: "One card is selected at random from a standard 52-card deck. What is the probability of drawing a heart or a king?", options: ["A) 4/52", "B) 16/52", "C) 17/52", "D) 13/52"], correct: 1 },
+            { id: "mcq12", topic: mcqTopics[2], title: "MCQ 12: Mutually Exclusive Lunch Events", prompt: "Thirty percent of students have a school lunch and 18% bring lunch; these categories are mutually exclusive. What is the probability that a student has either lunch arrangement?", options: ["A) 0.12", "B) 0.30", "C) 0.48", "D) 0.70"], correct: 2 },
+            { id: "mcq13", topic: mcqTopics[2], title: "MCQ 13: Bus Delay Tree Diagram", prompt: "A weather forecast gives P(rain) = 0.30. If it rains, the probability that the school bus is delayed is 0.40; if it does not rain, that probability is 0.10. Find the probability that the bus is delayed.", options: ["A) 0.12", "B) 0.19", "C) 0.30", "D) 0.40"], correct: 1 },
+            { id: "mcq14", topic: mcqTopics[2], title: "MCQ 14: Health Screening Total Probability", prompt: "A clinic’s screening flags 8% of students. The probability of the condition is 0.75 given a flag and 0.02 given no flag. Find the probability that a randomly selected student has the condition.", options: ["A) 0.0184", "B) 0.0600", "C) 0.0784", "D) 0.7500"], correct: 2 },
+            { id: "mcq15", topic: mcqTopics[2], title: "MCQ 15: Bus Riders Late Arrival", prompt: "Forty percent of students ride the bus. The probability of arriving on time is 0.80 for a bus rider and 0.90 for a student who does not ride the bus. Find the probability that a randomly selected student arrives late.", options: ["A) 0.10", "B) 0.14", "C) 0.20", "D) 0.86"], correct: 1 },
+            { id: "mcq16", topic: mcqTopics[2], title: "MCQ 16: Snack Supplier Defect Rate", prompt: "A school orders snacks from supplier A 70% of the time and supplier B 30% of the time. The defect probabilities are 0.02 for A and 0.05 for B. Find the probability that a snack is defective.", options: ["A) 0.014", "B) 0.029", "C) 0.035", "D) 0.070"], correct: 1 },
+            { id: "mcq17", topic: mcqTopics[3], title: "MCQ 17: Discrete RV Mean μ_X", prompt: "In a game, the points X have this probability distribution. Find the mean μ_X.<br><br><table class='data-table'><tr><th>x</th><th>0</th><th>1</th><th>2</th><th>3</th></tr><tr><td><b>P(X=x)</b></td><td>0.10</td><td>0.30</td><td>0.40</td><td>0.20</td></tr></table>", options: ["A) 0.40", "B) 1.70", "C) 0.81", "D) 0.90"], correct: 1 },
+            { id: "mcq18", topic: mcqTopics[3], title: "MCQ 18: Discrete RV Cumulative P(X ≥ 2)", prompt: "A game awards snack points according to the distribution below. Find P(X ≥ 2).<br><br><table class='data-table'><tr><th>x</th><th>0</th><th>1</th><th>2</th><th>3</th></tr><tr><td><b>P(X=x)</b></td><td>0.20</td><td>0.20</td><td>0.50</td><td>0.10</td></tr></table>", options: ["A) 0.10", "B) 0.50", "C) 0.60", "D) 0.80"], correct: 2 },
+            { id: "mcq19", topic: mcqTopics[3], title: "MCQ 19: Soccer Goals Standard Deviation σ_X", prompt: "The number of goals X scored in a game has the distribution below. Find the standard deviation σ_X.<br><br><table class='data-table'><tr><th>x</th><th>0</th><th>1</th><th>2</th><th>3</th></tr><tr><td><b>P(X=x)</b></td><td>0.25</td><td>0.50</td><td>0.20</td><td>0.05</td></tr></table>", options: ["A) 0.65 goals", "B) 0.80 goals", "C) 1.05 goals", "D) 1.75 goals"], correct: 1 },
+            { id: "mcq20", topic: mcqTopics[3], title: "MCQ 20: Free-Throw Bonus Mean", prompt: "A free-throw bonus X can be 0, 2, or 4 points, with probabilities 0.20, 0.50, and 0.30, respectively. Find the mean bonus.", options: ["A) 1.96 points", "B) 2.20 points", "C) 1.40 points", "D) 0.30 points"], correct: 1 },
+            { id: "mcq21", topic: mcqTopics[3], title: "MCQ 21: Drill Laps Standard Deviation", prompt: "The number of completed laps X in a drill has the probability distribution below. Find the standard deviation σ_X.<br><br><table class='data-table'><tr><th>x</th><th>0</th><th>1</th><th>2</th><th>3</th></tr><tr><td><b>P(X=x)</b></td><td>0.40</td><td>0.10</td><td>0.30</td><td>0.20</td></tr></table>", options: ["A) 1.41 laps", "B) 1.19 laps", "C) 1.30 laps", "D) 3.10 laps"], correct: 1 },
+            { id: "mcq22", topic: mcqTopics[3], title: "MCQ 22: At Most One Outcome P(X ≤ 1)", prompt: "A probability model for X is shown. Find P(X ≤ 1).<br><br><table class='data-table'><tr><th>x</th><th>0</th><th>1</th><th>2</th></tr><tr><td><b>P(X=x)</b></td><td>0.10</td><td>0.60</td><td>0.30</td></tr></table>", options: ["A) 0.10", "B) 0.30", "C) 0.60", "D) 0.70"], correct: 3 },
+            { id: "mcq23", topic: mcqTopics[5], title: "MCQ 23: True/False Guessing Binomial pdf", prompt: "A student guesses on 6 independent true-or-false questions, with probability p = 0.50 of answering each question correctly. If X is the number correct, find P(X = 4).", options: ["A) 0.09375", "B) 0.234375", "C) 0.3125", "D) 0.015625"], correct: 1 },
+            { id: "mcq24", topic: mcqTopics[5], title: "MCQ 24: Seed Sprouting Complement", prompt: "Each of 5 seeds sprouts independently with probability p = 0.80. If X is the number that sprout, find the probability that at least one seed fails to sprout.", options: ["A) 0.00032", "B) 0.32768", "C) 0.67232", "D) 0.80000"], correct: 2 },
+            { id: "mcq25", topic: mcqTopics[5], title: "MCQ 25: Basketball Shots Binomial pdf", prompt: "A player makes a shot with probability p = 0.30 on each independent attempt. For n = 8 attempts, let X be the number made. Find P(X = 2).", options: ["A) 0.296476", "B) 0.254121", "C) 0.744310", "D) 0.255690"], correct: 0 },
+            { id: "mcq26", topic: mcqTopics[5], title: "MCQ 26: Defect-Free Items Cumulative", prompt: "Each of n = 10 items is independently defect-free with probability p = 0.40. Let X be the number of defect-free items. Find P(X ≥ 3).", options: ["A) 0.167290", "B) 0.214991", "C) 0.832710", "D) 0.993953"], correct: 2 },
+            { id: "mcq27", topic: mcqTopics[5], title: "MCQ 27: Appointment Cancellations cdf", prompt: "Each of 12 appointments is independently cancelled with probability p = 0.20. Let X be the number of cancellations. Find P(X ≤ 2).", options: ["A) 0.283468", "B) 0.441654", "C) 0.558346", "D) 0.236223"], correct: 2 },
+            { id: "mcq28", topic: mcqTopics[5], title: "MCQ 28: Free Throw Binomial Mean & SD", prompt: "A player makes each free throw independently with probability p = 0.60. For n = 9 free throws, let X be the number made. Which pair gives the mean and standard deviation of X?", options: ["A) μ_X = 5.4 shots, σ_X ≈ 1.47 shots", "B) μ_X = 3.6 shots, σ_X ≈ 1.47 shots", "C) μ_X = 5.4 shots, σ_X ≈ 2.32 shots", "D) μ_X = 0.6 shots, σ_X = 9 shots"], correct: 0 },
+            { id: "mcq29", topic: mcqTopics[5], title: "MCQ 29: Success Count Binomial pdf", prompt: "Each of n = 15 independent trials is a success with probability p = 0.10. If X is the number of successes, find P(X = 2).", options: ["A) 0.128505", "B) 0.266896", "C) 0.815939", "D) 0.184061"], correct: 1 },
+            { id: "mcq30", topic: mcqTopics[5], title: "MCQ 30: Newsletter Email Clicks Mean & SD", prompt: "A school newsletter has a click rate of p = 0.35. For n = 20 independent emails, let X be the number clicked. Which pair gives the mean and standard deviation of X?", options: ["A) μ_X = 7 clicks, σ_X ≈ 2.13 clicks", "B) μ_X = 13 clicks, σ_X ≈ 2.13 clicks", "C) μ_X = 7 clicks, σ_X ≈ 2.65 clicks", "D) μ_X = 0.35 clicks, σ_X = 20 clicks"], correct: 0 },
+            { id: "mcq31", topic: mcqTopics[4], title: "MCQ 31: Daily Library Visitors Left Tail", prompt: "The number of daily library visitors is modeled by X ~ N(68, 8), where the mean and standard deviation are measured in visitors. Find P(X < 76).", options: ["A) 0.1587", "B) 0.5000", "C) 0.8413", "D) 0.9772"], correct: 2 },
+            { id: "mcq32", topic: mcqTopics[4], title: "MCQ 32: Package Weight Middle Probability", prompt: "Package weights are modeled by X ~ N(500, 40) grams. Find P(460 < X < 540).", options: ["A) 0.3413", "B) 0.6827", "C) 0.9545", "D) 0.5000"], correct: 1 },
+            { id: "mcq33", topic: mcqTopics[4], title: "MCQ 33: Test Score 90th Percentile", prompt: "Test scores are modeled by X ~ N(72, 9) points. Find the 90th percentile.", options: ["A) 60.5 points", "B) 72 points", "C) 81 points", "D) 83.5 points"], correct: 3 },
+            { id: "mcq34", topic: mcqTopics[4], title: "MCQ 34: Wait Time Below Cutoff", prompt: "Waiting times are modeled by X ~ N(42, 6) minutes. Find P(X < 35).", options: ["A) 0.1217", "B) 0.8783", "C) 0.1587", "D) 0.9088"], correct: 0 },
+            { id: "mcq35", topic: mcqTopics[4], title: "MCQ 35: Battery Lifetime Interval", prompt: "Battery life is modeled by X ~ N(120, 15) hours. Find P(100 < X < 140).", options: ["A) 0.1824", "B) 0.6827", "C) 0.8176", "D) 0.9088"], correct: 2 },
+            { id: "mcq36", topic: mcqTopics[4], title: "MCQ 36: Test Score Right Tail", prompt: "Scores are modeled by X ~ N(500, 100) points. Find P(X > 650).", options: ["A) 0.9332", "B) 0.0668", "C) 0.5000", "D) 0.8664"], correct: 1 },
+            { id: "mcq37", topic: mcqTopics[4], title: "MCQ 37: Daily Temperature Below Cutoff", prompt: "Daily temperatures are modeled by X ~ N(18, 4) degrees Celsius. Find the probability that a daily temperature is below 14°C.", options: ["A) 0.1587", "B) 0.8413", "C) 0.5000", "D) 0.9772"], correct: 0 },
+            { id: "mcq38", topic: mcqTopics[4], title: "MCQ 38: Height 25th Percentile", prompt: "Heights are modeled by X ~ N(170, 10) centimeters. What height is the 25th percentile?", options: ["A) 160.0 cm", "B) 163.3 cm", "C) 170.0 cm", "D) 176.7 cm"], correct: 1 },
+            { id: "mcq39", topic: mcqTopics[6], title: "MCQ 39: Student Support Poll Normal Approx", prompt: "A poll finds that each of n = 100 independently sampled students supports a proposal with probability p = 0.40. Let X be the number who support it. Use Y ~ N(40, 4.899) and normalcdf directly, with no continuity correction, to approximate P(35 < X < 45).", options: ["A) 0.3074", "B) 0.6926", "C) 0.8463", "D) 0.1537"], correct: 1 },
+            { id: "mcq40", topic: mcqTopics[6], title: "MCQ 40: Package Delay Normal Approx", prompt: "In a group of n = 80 independently handled packages, each has probability p = 0.30 of being delayed. Let X be the number delayed. Use Y ~ N(24, 4.099) and normalcdf directly, with no continuity correction, to approximate P(X < 30).", options: ["A) 0.0716", "B) 0.5000", "C) 0.9284", "D) 0.9964"], correct: 2 },
+            { id: "mcq41", topic: mcqTopics[0], title: "MCQ 41: Elective Selection & Employment", prompt: "A survey of 150 students recorded elective course choice and employment status. Find P(Art | Employed).<br><br><table class='data-table'><tr><th></th><th>Employed</th><th>Unemployed</th><th>Total</th></tr><tr><td><b>Art</b></td><td>30</td><td>20</td><td>50</td></tr><tr><td><b>STEM</b></td><td>45</td><td>55</td><td>100</td></tr><tr><td><b>Total</b></td><td>75</td><td>75</td><td>150</td></tr></table>", options: ["A) 0.20", "B) 0.333", "C) 0.40", "D) 0.60"], correct: 2 },
+            { id: "mcq42", topic: mcqTopics[0], title: "MCQ 42: Foreign Language & AP Course Enrollment", prompt: "In a senior class, foreign language study and enrollment in AP courses were recorded. Find P(AP | No Language).<br><br><table class='data-table'><tr><th></th><th>AP Course</th><th>No AP Course</th><th>Total</th></tr><tr><td><b>Language</b></td><td>60</td><td>40</td><td>100</td></tr><tr><td><b>No Language</b></td><td>20</td><td>80</td><td>100</td></tr><tr><td><b>Total</b></td><td>80</td><td>120</td><td>200</td></tr></table>", options: ["A) 0.10", "B) 0.20", "C) 0.25", "D) 0.50"], correct: 1 },
+            { id: "mcq43", topic: mcqTopics[0], title: "MCQ 43: Parking Permit & Extra-Curricular Activity", prompt: "Among 250 high school seniors, parking permit status and participation in after-school clubs were surveyed. Find P(Permit | Club Member).<br><br><table class='data-table'><tr><th></th><th>Club Member</th><th>No Club</th><th>Total</th></tr><tr><td><b>Permit</b></td><td>70</td><td>80</td><td>150</td></tr><tr><td><b>No Permit</b></td><td>30</td><td>70</td><td>100</td></tr><tr><td><b>Total</b></td><td>100</td><td>150</td><td>250</td></tr></table>", options: ["A) 0.28", "B) 0.467", "C) 0.70", "D) 0.75"], correct: 2 },
+            { id: "mcq44", topic: mcqTopics[1], title: "MCQ 44: Tutoring Attendance & Exam Passing Independence", prompt: "In a statistics class of 100 students, 40 attended tutoring. Of those who attended tutoring, 32 passed the final exam. Of those who did not attend, 36 passed. Are attending tutoring and passing the exam independent?", options: ["A) Yes, because P(Pass | Tutoring) = 0.80 and P(Pass) = 0.68.", "B) No, because P(Pass | Tutoring) = 0.80 while P(Pass) = 0.68.", "C) Yes, because 32/100 = 0.32 and 36/100 = 0.36.", "D) No, because 32 + 36 = 68."], correct: 1 },
+            { id: "mcq45", topic: mcqTopics[1], title: "MCQ 45: Cafeteria Preference & Grade Level Independence", prompt: "A school administrator wants to determine if lunch preference (Hot Lunch vs. Salad Bar) is independent of grade level (Junior vs. Senior). Among 100 Juniors, 60 prefer Hot Lunch. Among 100 Seniors, 60 prefer Hot Lunch. Are lunch preference and grade level independent?", options: ["A) No, because 60 = 60.", "B) Yes, because P(Hot Lunch | Junior) = 0.60 and P(Hot Lunch | Senior) = 0.60.", "C) No, because P(Junior) = 0.50.", "D) Cannot be determined without total probability."], correct: 1 },
+            { id: "mcq46", topic: mcqTopics[2], title: "MCQ 46: Advanced Conditioning (Bayes' Context)", prompt: "In a computer lab, 60% of computers are Brand X and 40% are Brand Y. Brand X has a hardware glitch 5% of the time, while Brand Y has a glitch 10% of the time. If a randomly chosen computer has a glitch, what is the probability it is Brand X?", options: ["A) 0.03", "B) 0.07", "C) 0.4286", "D) 0.5714"], correct: 2 },
+            { id: "mcq47", topic: mcqTopics[2], title: "MCQ 47: Independent Event Intersection", prompt: "Events A and B are independent. If P(A) = 0.60 and P(B) = 0.35, find P(A ∩ Bᶜ).", options: ["A) 0.21", "B) 0.39", "C) 0.60", "D) 0.74"], correct: 1 },
+            { id: "mcq48", topic: mcqTopics[3], title: "MCQ 48: Linear Transformation Mean", prompt: "Let X be the number of raffle tickets purchased by a student, with E(X) = 2.4. Each ticket costs $3, plus a flat processing fee of $1 per student. If Y = 3X + 1 is the total dollar amount spent, find E(Y).", options: ["A) $7.20", "B) $8.20", "C) $10.20", "D) $11.20"], correct: 1 },
+            { id: "mcq49", topic: mcqTopics[3], title: "MCQ 49: Linear Transformation Variance", prompt: "Let X have standard deviation σ_X = 1.5. If a new variable is defined as Y = 4 - 2X, what is the standard deviation σ_Y?", options: ["A) -3.0", "B) 1.5", "C) 3.0", "D) 6.0"], correct: 2 },
+            { id: "mcq50", topic: mcqTopics[3], title: "MCQ 50: Expected Profit Calculation", prompt: "A car owner buys a mechanical repair warranty for $200. The probability of needing a $1,000 repair is 0.15, and the probability of no repair is 0.85. What is the company's expected profit per warranty sold?", options: ["A) -$50", "B) $50", "C) $150", "D) $850"], correct: 1 },
+            { id: "mcq51", topic: mcqTopics[4], title: "MCQ 51: Z-Score Comparison", prompt: "Student A scored 82 on an exam with mean 75 and SD 5. Student B scored 88 on an exam with mean 80 and SD 8. Which student performed relatively better?", options: ["A) Student A (Z = 1.40 vs Z = 1.00)", "B) Student B (Z = 1.00 vs Z = 0.80)", "C) Both performed equally well.", "D) Cannot be determined without sample sizes."], correct: 0 },
+            { id: "mcq52", topic: mcqTopics[4], title: "MCQ 52: Interquartile Range (IQR) of Normal Distribution", prompt: "For a Normal distribution X ~ N(100, 15), what is the approximate Interquartile Range (IQR = Q3 - Q1)?", options: ["A) 10.1", "B) 15.0", "C) 20.2", "D) 30.0"], correct: 2 },
+            { id: "mcq53", topic: mcqTopics[4], title: "MCQ 53: Inverse Normal Top 10% Cutoff", prompt: "The weights of apples are normally distributed with mean 200 grams and SD 20 grams. The heaviest 10% of apples are classified as 'Jumbo'. What is the minimum weight for a Jumbo apple?", options: ["A) 174.4 g", "B) 225.6 g", "C) 232.9 g", "D) 240.0 g"], correct: 1 },
+            { id: "mcq54", topic: mcqTopics[5], title: "MCQ 54: Binomial Exact At Most Calculation", prompt: "A manufacturer knows 5% of lightbulbs are defective. In a random sample of 10 bulbs, what is the probability that at most 1 bulb is defective?", options: ["A) 0.3151", "B) 0.5987", "C) 0.9139", "D) 0.9885"], correct: 2 },
+            { id: "mcq55", topic: mcqTopics[5], title: "MCQ 55: Binomial Variance Calculation", prompt: "A multiple-choice test has 25 questions, each with 4 options. A student purely guesses on all questions. What is the variance of the number of correct answers?", options: ["A) 1.25", "B) 3.75", "C) 4.6875", "D) 6.25"], correct: 2 },
+            { id: "mcq56", topic: mcqTopics[5], title: "MCQ 56: Checking Binomial (BINS) Setting", prompt: "Which of the following settings does NOT describe a Binomial random variable?", options: ["A) Counting the number of red cards drawn from a deck when cards are drawn WITH replacement (n = 10).", "B) Counting the number of red cards drawn from a deck when cards are drawn WITHOUT replacement (n = 10).", "C) Tossing a fair coin 50 times and recording the number of heads.", "D) Rolling a 6-sided die 20 times and counting the number of times a 5 appears."], correct: 1 },
+            { id: "mcq57", topic: mcqTopics[5], title: "MCQ 57: Binomial Probability Greater Than Cutoff", prompt: "A surgeon has an 80% success rate on a delicate procedure. If she performs 7 independent procedures, what is the probability of achieving at least 6 successes?", options: ["A) 0.2753", "B) 0.3670", "C) 0.5767", "D) 0.6226"], correct: 2 },
+            { id: "mcq58", topic: mcqTopics[6], title: "MCQ 58: Checking Large Sample Conditions", prompt: "Under which sample size n and success probability p is the Normal approximation to the Binomial distribution appropriate?", options: ["A) n = 15, p = 0.20", "B) n = 25, p = 0.30", "C) n = 60, p = 0.30", "D) n = 100, p = 0.05"], correct: 2 },
+            { id: "mcq59", topic: mcqTopics[6], title: "MCQ 59: Normal Approx Parameters", prompt: "A political campaign surveys 400 voters in a city where 60% support a candidate. Using a Normal approximation, what mean and standard deviation should be used for the number of supporters?", options: ["A) μ = 240, σ = 9.80", "B) μ = 240, σ = 9.60", "C) μ = 200, σ = 10.00", "D) μ = 240, σ = 96.00"], correct: 0 },
+            { id: "mcq60", topic: mcqTopics[6], title: "MCQ 60: Normal Approx Right Tail Calculation", prompt: "In a large factory, 20% of parts require rework. In a random sample of 225 parts, use a Normal model Y ~ N(45, 6) to approximate the probability that more than 54 parts require rework, P(X > 54).", options: ["A) 0.0668", "B) 0.1587", "C) 0.4332", "D) 0.9332"], correct: 0 }
+        ];
+
+        const frqBank = [
+            { id: "frq1", topic: mcqTopics[0], title: "FRQ 1: Preferred Study Location & Grade Level", prompt: "Dr. Osei surveyed 200 students at a high school about their preferred study location. Underclassmen are in grades 9–10, and Upperclassmen are in grades 11–12.<br><br><table class='data-table'><tr><th>Grade Level</th><th>Library</th><th>Home</th><th>Total</th></tr><tr><td><b>Underclassman</b></td><td>48</td><td>72</td><td>120</td></tr><tr><td><b>Upperclassman</b></td><td>52</td><td>28</td><td>80</td></tr><tr><td><b>Total</b></td><td>100</td><td>100</td><td>200</td></tr></table><br><b>A.</b> (i) Find P(Library). (ii) Find P(Upperclassman AND Library).<br><b>B.</b> (i) Find P(Underclassman OR Home, but not both). (ii) Interpret in context.<br><b>C.</b> (i) Find P(Library | Upperclassman). (ii) Interpret in context.<br><b>D.</b> Are 'prefers Library' and 'is Upperclassman' independent? Justify." },
+            { id: "frq2", topic: mcqTopics[0], title: "FRQ 2: Drama & Robotics Club Venn Diagram", prompt: "A middle school has 300 students. Of these students, 120 are members of the Drama Club, 90 are members of the Robotics Club, and 30 are members of both clubs.<br><br><b>A.</b> (i) Find P(Drama). (ii) Find P(both clubs).<br><b>B.</b> (i) Find P(exactly one club). (ii) Find P(neither club).<br><b>C.</b> (i) Find P(Drama | Robotics). (ii) Interpret in context.<br><b>D.</b> Are Drama and Robotics club memberships independent? Justify." },
+            { id: "frq3", topic: mcqTopics[2], title: "FRQ 3: Weather and Commute Delays", prompt: "Mr. Nakamura studied rainy mornings and commute delays. P(rainy) = 0.35. Given rain, P(delay) = 0.70. Given no rain, P(delay) = 0.20.<br><br><b>A.</b> (i) Find P(rainy AND delay). (ii) Find P(non-rainy AND delay).<br><b>B.</b> (i) Find P(delay | rainy). (ii) Interpret in context.<br><b>C.</b> (i) Find P(delay). (ii) Interpret in context.<br><b>D.</b> Are 'rainy morning' and 'commute delay' independent? Justify." },
+            { id: "frq4", topic: mcqTopics[3], title: "FRQ 4: Extracurricular Activities Distribution", prompt: "Dr. Osei studies extracurricular activities per student. Let X be the number of activities.<br><br><table class='data-table'><tr><th>x</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr><tr><td><b>P(X=x)</b></td><td>0.05</td><td>0.15</td><td>0.30</td><td>0.25</td><td>0.15</td><td>0.10</td></tr></table><br><b>A.</b> Identify population and variable type.<br><b>B.</b> (i) Find P(X ≥ 3). (ii) Find P(1 ≤ X ≤ 3).<br><b>C.</b> Find mean μ_X, standard deviation σ_X, and interpret both.<br><b>D.</b> Evaluate claim that a typical student participates in 1–3 activities using μ_X and σ_X." },
+            { id: "frq5", topic: mcqTopics[3], title: "FRQ 5: Exercise Days Per Week", prompt: "Ms. Nair studies days per week college students exercise.<br><br><table class='data-table'><tr><th>x</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th></tr><tr><td><b>P(X=x)</b></td><td>0.10</td><td>0.12</td><td>0.18</td><td>0.22</td><td>0.18</td><td>0.10</td><td>0.06</td><td>0.04</td></tr></table><br><b>A.</b> Identify population and variable type.<br><b>B.</b> (i) Find P(X ≤ 2). (ii) Find P(3 ≤ X ≤ 5).<br><b>C.</b> Find mean μ_X, standard deviation σ_X, and interpret both.<br><b>D.</b> Find probability student meets CDC 3-day recommendation." },
+            { id: "frq6", topic: mcqTopics[3], title: "FRQ 6: Sleep Hours Per Night", prompt: "Mr. Webb studies hours of sleep per night among high school seniors.<br><br><table class='data-table'><tr><th>x</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th></tr><tr><td><b>P(X=x)</b></td><td>0.08</td><td>0.17</td><td>0.25</td><td>0.28</td><td>0.15</td><td>0.07</td></tr></table><br><b>A.</b> Identify population and variable type.<br><b>B.</b> (i) Find P(X < 7). (ii) Find P(X ≥ 8).<br><b>C.</b> Find mean μ_X, standard deviation σ_X, and interpret both.<br><b>D.</b> CDC recommends ≥ 8 hours. Evaluate whether meeting this is typical." },
+            { id: "frq7", topic: mcqTopics[4], title: "FRQ 7: Newborn Birth Weight Normal Model", prompt: "Full-term newborn birth weights are approximately normally distributed with mean 7.5 lbs and SD 1.1 lbs.<br><br><b>A.</b> State model, population, and variable.<br><b>B.</b> (i) Find P(weight < 6.0 lbs). (ii) Find P(7.0 < weight < 9.0 lbs).<br><b>C.</b> (i) Find cutoff for bottom 10%. (ii) Find cutoff for top 25%. (iii) Interpret both.<br><b>D.</b> Verify/refute claim that 95% weigh between 5.3 and 9.7 lbs." },
+            { id: "frq8", topic: mcqTopics[4], title: "FRQ 8: City Workers' Commute Times", prompt: "Commute times are normally distributed with mean 42 minutes and SD 9 minutes.<br><br><b>A.</b> State model, population, and variable.<br><b>B.</b> (i) Find P(commute > 55 min). (ii) Find P(30 < commute < 50 min).<br><b>C.</b> (i) Find top 5% cutoff. (ii) Find 20th percentile. (iii) Interpret both.<br><b>D.</b> Verify/refute claim that fewer than 15% commute under 30 minutes." },
+            { id: "frq9", topic: mcqTopics[4], title: "FRQ 9: 10th Grade Reading Assessment", prompt: "Reading scores are normally distributed with mean 520 and SD 85.<br><br><b>A.</b> State model, population, and variable.<br><b>B.</b> (i) Find P(score > 650). (ii) Find P(450 < score < 600).<br><b>C.</b> (i) Find top 8% minimum score. (ii) Find 35th percentile. (iii) Interpret both.<br><b>D.</b> Comment on district claim that 70% score between 450 and 620." },
+            { id: "frq10", topic: mcqTopics[5], title: "FRQ 10: Homework Completion Binomial", prompt: "Probability of completing all homework is p = 0.65, sample size n = 80.<br><br><b>A.</b> Check BINS conditions, define success/failure, state n, p, and X.<br><b>B.</b> (i) Find P(X = 50). (ii) Find P(X ≤ 45).<br><b>C.</b> Find mean μ and SD σ. Interpret both.<br><b>D.</b> Use normal approximation to find P(X > 55) showing 4 steps." },
+            { id: "frq11", topic: mcqTopics[5], title: "FRQ 11: Water Intake Binomial Model", prompt: "Probability an adult meets water intake recommendation is p = 0.40, sample size n = 120.<br><br><b>A.</b> Check BINS conditions, define success/failure, state n, p, and X.<br><b>B.</b> (i) Find P(X = 45). (ii) Find P(X ≥ 55).<br><b>C.</b> Find mean μ and SD σ. Interpret both.<br><b>D.</b> Use normal approximation to find P(40 ≤ X ≤ 55) showing 4 steps." },
+            { id: "frq12", topic: mcqTopics[5], title: "FRQ 12: Daily Student Stress", prompt: "Probability a student reports daily stress is p = 0.55, sample size n = 100.<br><br><b>A.</b> Check BINS conditions, define success/failure, state n, p, and X.<br><b>B.</b> (i) Find P(X = 60). (ii) Find P(X ≤ 49).<br><b>C.</b> Find mean μ and SD σ. Interpret both.<br><b>D.</b> Use normal approximation to find P(X ≥ 60) showing 4 steps." }
+        ];
+
+        let activeExamQuestions = [];
+        let studentAnswers = {};
+        let currentBBIndex = 0;
+        let currentStudentName = "";
+        let currentStudentPeriod = "";
+        let isExamActive = false;
+        let lockoutCount = 0;
+        let departureLogs = [];
+        let teacherPasscode = "1234";
+
+        function initBank() {
+            if (window.PRE_CONFIGURED_TEST_DATA) {
+                const testData = window.PRE_CONFIGURED_TEST_DATA;
+                teacherPasscode = testData.passcode || "1234";
+                
+                activeExamQuestions = [];
+                (testData.mcqs || []).forEach(id => {
+                    const q = mcqBank.find(item => item.id === id);
+                    if (q) activeExamQuestions.push({ ...q, type: 'mcq' });
+                });
+                (testData.frqs || []).forEach(id => {
+                    const q = frqBank.find(item => item.id === id);
+                    if (q) activeExamQuestions.push({ ...q, type: 'frq' });
+                });
+
+                document.getElementById('teacher-portal').classList.add('hidden');
+                document.getElementById('bb-exam-title').innerText = testData.title || "AP Statistics Exam";
+                openModal('student-name-modal');
+                setupLockoutTracker();
+                return;
+            }
+
+            const mcqContainer = document.getElementById('mcq-bank-container');
+            mcqContainer.innerHTML = mcqBank.map(item => `
+                <div class="item-card">
+                    <input type="checkbox" id="${item.id}" class="mcq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">${item.title}</div>
+                        <div class="item-topic">${item.topic}</div>
+                        <div class="item-full-text">
+                            <div>${item.prompt}</div>
+                            <div style="margin-top: 6px; font-weight: 500; color: #444;">
+                                ${item.options.join(' &nbsp;&nbsp;&nbsp;&nbsp; ')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            const frqContainer = document.getElementById('frq-bank-container');
+            frqContainer.innerHTML = frqBank.map(item => `
+                <div class="item-card">
+                    <input type="checkbox" id="${item.id}" class="frq-checkbox" onchange="updateCounts()">
+                    <div class="item-content">
+                        <div class="item-title">${item.title}</div>
+                        <div class="item-topic">${item.topic}</div>
+                        <div class="item-full-text">${item.prompt}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            setupLockoutTracker();
+        }
+
+        function updateCounts() {
+            const mcqCount = document.querySelectorAll('.mcq-checkbox:checked').length;
+            const frqCount = document.querySelectorAll('.frq-checkbox:checked').length;
+            document.getElementById('selected-mcq-count').innerText = mcqCount;
+            document.getElementById('selected-frq-count').innerText = frqCount;
+        }
+
+        function exportStandaloneStudentHTML() {
+            const title = document.getElementById('test-title-input').value;
+            const passcode = document.getElementById('teacher-passcode-input').value.trim() || "1234";
+            const selectedMCQs = Array.from(document.querySelectorAll('.mcq-checkbox:checked')).map(cb => cb.id);
+            const selectedFRQs = Array.from(document.querySelectorAll('.frq-checkbox:checked')).map(cb => cb.id);
+
+            if (selectedMCQs.length === 0 && selectedFRQs.length === 0) {
+                alert('Please select at least one MCQ or FRQ to export a student test.');
+                return;
+            }
+
+            const testData = { title, passcode, mcqs: selectedMCQs, frqs: selectedFRQs };
+            const fullHTML = document.documentElement.outerHTML;
+
+            const injectionScript = `<script>window.PRE_CONFIGURED_TEST_DATA = ${JSON.stringify(testData)};<\/script>`;
+            const modifiedHTML = fullHTML.replace('</head>', `${injectionScript}\n</head>`);
+
+            const blob = new Blob([modifiedHTML], { type: 'text/html' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `${title.replace(/[^a-zA-Z0-9]/g, '_')}_Student_Exam.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function confirmStudentEntryAndStart() {
+            const name = document.getElementById('entry-student-name').value.trim();
+            const period = document.getElementById('entry-student-period').value.trim();
+
+            if (!name) {
+                alert('Please enter your full name to start.');
+                return;
+            }
+
+            currentStudentName = name;
+            currentStudentPeriod = period || "N/A";
+
+            closeModal('student-name-modal');
+            document.getElementById('student-view').classList.remove('hidden');
+            document.getElementById('bb-student-tag').innerText = `— Student: ${currentStudentName} (${currentStudentPeriod})`;
+
+            try {
+    const saved = JSON.parse(localStorage.getItem(getSaveKey()));
+    if (saved) {
+        studentAnswers = saved.answers || {};
+        currentBBIndex = saved.index || 0;
+        lockoutCount = saved.lockoutCount || 0;
+        departureLogs = saved.departureLogs || [];
+    }
+} catch (e) {}
+isExamActive = true;
+if (lockoutCount >= 2) openModal('hard-lockout-modal');
+if (lockoutCount >= 2) openModal('hard-lockout-modal');
+            renderBBQuestion();
+        }
+
+        function setupLockoutTracker() {
+if (window._lockoutAttached) return;
+window._lockoutAttached = true;
+            document.addEventListener('visibilitychange', () => {
+                if (!isExamActive) return;
+                if (document.hidden) {
+                    lockoutCount++;
+                    const timestamp = new Date().toLocaleTimeString();
+                    departureLogs.push(`Window left at ${timestamp}`);
+                    
+                    if (lockoutCount === 1) {
+                        openModal('lockout-warning-modal');
+                    } else if (lockoutCount >= 2) {
+                        closeModal('lockout-warning-modal');
+                        openModal('hard-lockout-modal');
+                    }
+                }
+            });
+        }
+
+        function attemptTeacherUnlock() {
+            const entered = document.getElementById('teacher-unlock-passcode').value.trim();
+            if (entered === teacherPasscode) {
+                document.getElementById('teacher-unlock-passcode').value = '';
+                closeModal('hard-lockout-modal');
+                alert('Exam successfully unlocked by teacher.');
+            } else {
+                alert('Incorrect passcode. Please ask your teacher to unlock.');
+            }
+        }
+
+        function prepareAndPrintPaperTest() {
+            document.body.className = "printing-blank-paper";
+            const title = document.getElementById('test-title-input').value;
+            const packet = document.getElementById('print-test-packet');
+            
+            let selectedMCQs = [];
+            let selectedFRQs = [];
+
+            document.querySelectorAll('.mcq-checkbox:checked').forEach(cb => {
+                const item = mcqBank.find(q => q.id === cb.id);
+                if (item) selectedMCQs.push(item);
+            });
+
+            document.querySelectorAll('.frq-checkbox:checked').forEach(cb => {
+                const item = frqBank.find(q => q.id === cb.id);
+                if (item) selectedFRQs.push(item);
+            });
+
+            if (selectedMCQs.length === 0 && selectedFRQs.length === 0) {
+                alert('Please select at least one question to print.');
+                return;
+            }
+
+            let html = `
+                <div class="print-header">
+                    <h1>${title}</h1>
+                    <p style="margin-top: 5px; font-weight: bold;">AP Statistics Assessment Packet</p>
+                </div>
+                <div class="print-student-info">
+                    <span>Student Name: ____________________________________</span>
+                    <span>Date: ________________</span>
+                    <span>Period: ______</span>
+                </div>
+            `;
+
+            if (selectedMCQs.length > 0) {
+                html += `<h2 style="border-bottom: 2px solid black; padding-bottom: 4px; margin-bottom: 15px;">Section I: Multiple Choice Questions</h2>`;
+                selectedMCQs.forEach((q, idx) => {
+                    html += `
+                        <div class="print-item">
+                            <div class="print-item-title">Question ${idx + 1}</div>
+                            <div>${q.prompt}</div>
+                            <div class="print-mcq-choices">
+                                ${q.options.map(opt => `<div>[ &nbsp; ] ${opt}</div>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            if (selectedFRQs.length > 0) {
+                html += `<div style="page-break-before: always;"></div>`;
+                html += `<h2 style="border-bottom: 2px solid black; padding-bottom: 4px; margin-bottom: 15px;">Section II: Free Response Questions</h2>`;
+                selectedFRQs.forEach((q, idx) => {
+                    html += `
+                        <div class="print-item">
+                            <div class="print-item-title">Question ${idx + 1}</div>
+                            <div>${q.prompt}</div>
+                            <div style="margin-top: 10px; font-weight: bold;">Show all work, formulas, and contextual interpretations below:</div>
+                            <div class="print-frq-workspace"></div>
+                        </div>
+                    `;
+                });
+            }
+
+            packet.innerHTML = html;
+            window.print();
+        }
+
+        function printAnswerKey() {
+    const title = document.getElementById('test-title-input').value;
+    const mcqs = Array.from(document.querySelectorAll('.mcq-checkbox:checked')).map(cb => mcqBank.find(q => q.id === cb.id)).filter(Boolean);
+    if (mcqs.length === 0) {
+        alert('Please select at least one MCQ to print a key.');
+        return;
+    }
+    document.body.className = "printing-blank-paper";
+    const letters = ['A', 'B', 'C', 'D', 'E'];
+    let html = `<div class="print-header"><h1>${title}</h1><p style="margin-top:5px;font-weight:bold;">ANSWER KEY - TEACHER COPY</p></div>`;
+    html += `<h2 style="border-bottom:2px solid black;padding-bottom:4px;margin-bottom:15px;">Multiple Choice</h2>`;
+    mcqs.forEach((q, idx) => {
+        html += `<div style="margin-bottom:6px;"><strong>Question ${idx + 1}:</strong> ${letters[q.correct]} &nbsp; <small>(${q.id})</small></div>`;
+    });
+    document.getElementById('print-test-packet').innerHTML = html;
+    window.print();
+}
+
+function printGradedSubmissionPDF() {
+            document.body.className = "printing-graded-submission";
+            window.print();
+        }
+
+        function launchDigitalBluebookExam() {
+            activeExamQuestions = [];
+            
+            document.querySelectorAll('.mcq-checkbox:checked').forEach(cb => {
+                const item = mcqBank.find(q => q.id === cb.id);
+                if (item) activeExamQuestions.push({ ...item, type: 'mcq' });
+            });
+
+            document.querySelectorAll('.frq-checkbox:checked').forEach(cb => {
+                const item = frqBank.find(q => q.id === cb.id);
+                if (item) activeExamQuestions.push({ ...item, type: 'frq' });
+            });
+
+            if (activeExamQuestions.length === 0) {
+                alert('Please select at least one MCQ or FRQ before previewing.');
+                return;
+            }
+
+            currentStudentName = "Teacher Preview";
+            currentStudentPeriod = "Preview Mode";
+
+            document.getElementById('teacher-portal').classList.add('hidden');
+            document.getElementById('student-view').classList.remove('hidden');
+            document.getElementById('bb-exam-title').innerText = document.getElementById('test-title-input').value;
+            document.getElementById('bb-student-tag').innerText = `— (${currentStudentName})`;
+            
+            try {
+    const saved = JSON.parse(localStorage.getItem(getSaveKey()));
+    if (saved) {
+        studentAnswers = saved.answers || {};
+        currentBBIndex = Math.min(saved.index || 0, activeExamQuestions.length - 1);
+    }
+} catch (e) {}
+isExamActive = true;
+            renderBBQuestion();
+        }
+
+        function renderBBQuestion() {
+            const q = activeExamQuestions[currentBBIndex];
+            document.getElementById('bb-question-number').innerText = `Question ${currentBBIndex + 1}`;
+            document.getElementById('bb-question-prompt').innerHTML = q.prompt;
+            document.getElementById('bb-question-tracker').innerText = `Question ${currentBBIndex + 1} of ${activeExamQuestions.length}`;
+
+            const mcqContainer = document.getElementById('bb-mcq-container');
+            const frqContainer = document.getElementById('bb-frq-container');
+
+            if (q.type === 'mcq') {
+                mcqContainer.classList.remove('hidden');
+                frqContainer.classList.add('hidden');
+
+                mcqContainer.innerHTML = q.options.map((opt, idx) => `
+                    <label class="mcq-option-label">
+                        <input type="radio" name="mcq_choice" value="${idx}" ${studentAnswers[q.id] === idx ? 'checked' : ''} onchange="recordAnswer('${q.id}', ${idx})">
+                        <span>${opt}</span>
+                    </label>
+                `).join('');
+            } else {
+                mcqContainer.classList.add('hidden');
+                frqContainer.classList.remove('hidden');
+
+                const textarea = document.getElementById('frq-response-input');
+                textarea.value = studentAnswers[q.id] || '';
+                textarea.oninput = (e) => recordAnswer(q.id, e.target.value);
+            }
+
+            const nextBtn = document.getElementById('bb-next-btn');
+            if (currentBBIndex === activeExamQuestions.length - 1) {
+                nextBtn.innerText = "Submit Test ✓";
+                nextBtn.style.background = "var(--correct-green)";
+                nextBtn.onclick = submitStudentExam;
+            } else {
+                nextBtn.innerText = "Next →";
+                nextBtn.style.background = "var(--cb-blue)";
+                nextBtn.onclick = () => navigateQuestion(1);
+            }
+        }
+
+        function navigateQuestion(direction) {
+    if (currentBBIndex + direction >= 0 && currentBBIndex + direction < activeExamQuestions.length) {
+        currentBBIndex += direction;
+        try {
+            localStorage.setItem(getSaveKey(), JSON.stringify({
+                answers: studentAnswers,
+                index: currentBBIndex,
+                lockoutCount: lockoutCount,
+                departureLogs: departureLogs
+            }));
+        } catch (e) {}
+        renderBBQuestion();
+    }
+}
+
+        function recordAnswer(qId, val) {
+    studentAnswers[qId] = val;
+    try {
+        localStorage.setItem(getSaveKey(), JSON.stringify({
+            answers: studentAnswers,
+            index: currentBBIndex,
+            lockoutCount: lockoutCount,
+            departureLogs: departureLogs
+        }));
+    } catch (e) {}
+}
+
+function getSaveKey() {
+    return 'apstats_unit2_' + currentStudentName + '_' + (window.PRE_CONFIGURED_TEST_DATA ? window.PRE_CONFIGURED_TEST_DATA.title : 'preview');
+}
+
+        function insertSymbol(symbol) {
+            if (!symbol) return;
+            const textarea = document.getElementById('frq-response-input');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            textarea.value = text.substring(0, start) + symbol + text.substring(end);
+            textarea.selectionStart = textarea.selectionEnd = start + symbol.length;
+            textarea.focus();
+            recordAnswer(activeExamQuestions[currentBBIndex].id, textarea.value);
+        }
+
+        function submitStudentExam() {
+            if (!confirm('Are you sure you want to submit your exam?')) return;
+
+            isExamActive = false;
+            document.getElementById('student-view').classList.add('hidden');
+            document.getElementById('teacher-review-view').classList.remove('hidden');
+
+            document.getElementById('review-test-title').innerText = document.getElementById('bb-exam-title').innerText;
+            document.getElementById('review-student-name').innerText = currentStudentName;
+            document.getElementById('review-student-period').innerText = currentStudentPeriod;
+
+            let mcqCorrect = 0;
+            let mcqTotal = 0;
+
+            const mcqList = document.getElementById('review-mcq-list');
+            mcqList.innerHTML = '';
+
+            const frqList = document.getElementById('review-frq-list');
+            frqList.innerHTML = '';
+
+            activeExamQuestions.forEach((q, idx) => {
+                if (q.type === 'mcq') {
+                    mcqTotal++;
+                    const studentChoice = studentAnswers[q.id];
+                    const isCorrect = studentChoice === q.correct;
+                    if (isCorrect) mcqCorrect++;
+
+                    mcqList.innerHTML += `
+                        <div style="background: white; border: 1px solid var(--border-color); border-radius: 6px; padding: 16px; margin-bottom: 12px; page-break-inside: avoid;">
+                            <div style="font-weight: bold; margin-bottom: 6px;">
+                                ${isCorrect ? '✅ <span style="color:var(--correct-green)">CORRECT</span>' : '❌ <span style="color:var(--incorrect-red)">INCORRECT</span>'} — Q${idx+1}
+                            </div>
+                            <div style="margin-bottom: 8px;">${q.prompt}</div>
+                            <p style="font-size:0.9rem; margin-top: 6px;"><strong>Student Selected:</strong> ${studentChoice !== undefined ? q.options[studentChoice] : '<em>No Answer Selected</em>'}</p>
+                            <p style="font-size:0.9rem; color: var(--correct-green); margin-top: 2px;"><strong>Correct Key:</strong> ${q.options[q.correct]}</p>
+                        </div>
+                    `;
+                } else {
+                    frqList.innerHTML += `
+                        <div style="background: white; border: 1px solid var(--border-color); border-radius: 6px; padding: 16px; margin-bottom: 12px; page-break-inside: avoid;">
+                            <div style="font-weight: bold; margin-bottom: 6px; color: var(--cb-blue);">Q${idx+1}</div>
+                            <div style="margin-bottom: 12px;">${q.prompt}</div>
+                            <div style="font-weight: bold; margin-bottom: 4px;">Student Response:</div>
+                            <div style="background: #f8f9fa; border: 1px solid var(--border-color); border-left: 4px solid var(--cb-blue); padding: 12px; font-family: monospace; white-space: pre-wrap; font-size: 0.95rem;">${studentAnswers[q.id] ? escapeText(studentAnswers[q.id]) : 'No Response Provided.'}}</div>
+                        </div>
+                    `;
+                }
+            });
+
+            document.getElementById('mcq-score-banner').innerText = `MCQ Score: ${mcqCorrect} / ${mcqTotal} Correct (${mcqTotal > 0 ? Math.round((mcqCorrect/mcqTotal)*100) : 0}%)`;
+
+            const auditBanner = document.getElementById('security-audit-banner');
+            if (lockoutCount === 0) {
+                auditBanner.style.background = "#e6f4ea";
+                auditBanner.style.borderColor = "#28a745";
+                auditBanner.style.color = "#137333";
+                auditBanner.innerHTML = `<strong>🛡️ Security Audit Passed:</strong> Zero tab or window departures recorded during test session.`;
+            } else {
+                auditBanner.style.background = "#f8d7da";
+                auditBanner.style.borderColor = "#dc3545";
+                auditBanner.style.color = "#721c24";
+                auditBanner.innerHTML = `<strong>⚠️ Security Audit Flag:</strong> Student left the test window <strong>${lockoutCount} time(s)</strong> during the test session.<br><small>${departureLogs.join(' | ')}</small>`;
+            }
+        }
+
+        function escapeText(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        window.onload = initBank;
+    </script>
+
+</body></html>
